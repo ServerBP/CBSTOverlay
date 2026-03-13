@@ -8,6 +8,7 @@
     import { io, Socket } from 'socket.io-client';
     import { encode, decode } from "@msgpack/msgpack";
     import { PUBLIC_BK_WS_URL, PUBLIC_TOURNAMENT_GUID, PUBLIC_OVERLAY_GUID } from "$env/static/public";
+    import Container from "$lib/Container.svelte";
 
     const query = page.url.searchParams;
     const authToken = query.get('token');
@@ -76,6 +77,10 @@
             <div class="body-area">
                 <MatchSummaryOverlay match={overlay.match} />
             </div>
+
+            <div class="casters-area">
+                <Container width="350px" height="148px" />
+            </div>
         </div>
     {/if}
 </Background>
@@ -106,5 +111,12 @@
         bottom: 0;
         display: flex;
         align-items: stretch;
+    }
+
+    .casters-area {
+        position: absolute;
+        bottom: 16px;
+        left: 24px;
+        z-index: 10;
     }
 </style>

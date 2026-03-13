@@ -4,19 +4,20 @@
     import Header from "$lib/overlay/Header.svelte";
     import PicksBansSongCard from "$lib/overlay/PicksBansSongCard.svelte";
     import PicksBansOverview from "$lib/overlay/PicksBansOverview.svelte";
+    import Container from "$lib/Container.svelte";
 	import { onMount } from "svelte";
     import { io, Socket } from 'socket.io-client';
     import { encode, decode } from "@msgpack/msgpack";
     import Loading from "$lib/Loading.svelte";
     import { PUBLIC_BK_WS_URL, PUBLIC_TOURNAMENT_GUID, PUBLIC_OVERLAY_GUID } from "$env/static/public";
 
-    // Native card dimensions (rem * 16px base)
-    const CARD_NATIVE_W = 29.5 * 16; // 472px
-    const CARD_NATIVE_H = 8.5625 * 16; // 137px
-    const COLS = 3;
-    const CARD_GAP = 128; // 1rem gap between cards in a row
-    const ROW_GAP = 64; // 1rem gap between rows
-    const AREA_PAD = 32; // 2rem padding on each side of the cards area
+    // Card dimensions & layout constants
+    const CARD_W = 29.5 * 16;  // 472px
+    const CARD_H = 8.5625 * 16; // 137px
+    const CARD_GAP = 16;
+    const ROW_GAP = 20;
+    const PAD = 24;
+    const CARDS_AREA_H = 720; // from header (180px) to casters area (900px)
 
     const query = page.url.searchParams;
     const authToken = query.get('token');
@@ -26,39 +27,29 @@
     let isLoading: boolean = $state(true);
     let overlay: any = $state(null);
 
-    // Cards area sizing for adaptive scaling
-    let cardsAreaEl: HTMLElement | null = $state(null);
-    let cardsAreaW: number = $state(0);
-    let cardsAreaH: number = $state(0);
-
-    $effect(() => {
-        if (!cardsAreaEl) return;
-        const ro = new ResizeObserver(entries => {
-            cardsAreaW = entries[0].contentRect.width;
-            cardsAreaH = entries[0].contentRect.height;
-        });
-        ro.observe(cardsAreaEl);
-        return () => ro.disconnect();
+    // Adaptive column count: 3 for ≤9 maps, 4 for 10+
+    const cols = $derived.by(() => {
+        const maps = overlay?.match?.mapPool?.maps ?? [];
+        return maps.length >= 10 ? 4 : 3;
     });
 
-    // Compute a uniform scale so all 3 columns (plus gaps & padding) fit the available width.
-    // Also factor in height so rows never push outside the area.
-    const cardScale = $derived.by(() => {
-        if (cardsAreaW <= 0) return 1;
+    const nRows = $derived.by(() => {
         const maps = overlay?.match?.mapPool?.maps ?? [];
-        const nRows = Math.ceil(maps.length / COLS) || 1;
+        return Math.ceil(maps.length / cols) || 1;
+    });
 
-        const usableW = cardsAreaW - AREA_PAD * 2;
-        const scaleByW = (usableW - CARD_GAP * (COLS - 1)) / (COLS * CARD_NATIVE_W);
+    const cardScale = $derived.by(() => {
+        const usableW = 1920 - PAD * 2;
+        const usableH = CARDS_AREA_H - PAD * 2;
 
-        const usableH = cardsAreaH - AREA_PAD * 2;
-        const scaleByH = (usableH - ROW_GAP * (nRows - 1)) / (nRows * CARD_NATIVE_H);
+        const scaleByW = (usableW - CARD_GAP * (cols - 1)) / (cols * CARD_W);
+        const scaleByH = (usableH - ROW_GAP * (nRows - 1)) / (nRows * CARD_H);
 
         return Math.min(1, scaleByW, scaleByH);
     });
 
-    const slotW = $derived(CARD_NATIVE_W * cardScale);
-    const slotH = $derived(CARD_NATIVE_H * cardScale);
+    const slotW = $derived(CARD_W * cardScale);
+    const slotH = $derived(CARD_H * cardScale);
 
     onMount(async() => {
         loadingMessage = `Attempting to connect to BeatKhana! websocket server`;
@@ -145,12 +136,13 @@
         <Loading message={loadingMessage} />
     {:else}
         <div class="layout">
-            <!-- Top area: the match header -->
-            <Header match={overlay.match} />
-            <!-- Bottom area: pyramid map cards -->
-            <div class="cards-area" bind:this={cardsAreaEl}>
+            <div class="header-area">
+                <Header match={overlay.match} />
+            </div>
+
+            <div class="cards-area">
                 {#if overlay.match?.mapPool}
-                    {@const rows = chunkArray(overlay.match.mapPool.maps, COLS)}
+                    {@const rows = chunkArray(overlay.match.mapPool.maps, cols)}
                     <div class="cards-grid" style="gap: {ROW_GAP}px">
                         {#each rows as row}
                             <div class="cards-row" style="gap: {CARD_GAP}px">
@@ -173,6 +165,10 @@
                     </div>
                 {/if}
             </div>
+
+            <div class="casters-area">
+                <Container width="350px" height="148px" />
+            </div>
         </div>
     {/if}
 </Background>
@@ -181,14 +177,26 @@
     .layout {
         position: absolute;
         inset: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+    }
+
+    .header-area {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 180px;
+        z-index: 100;
     }
 
     .cards-area {
-        flex: 1 1 auto;
-        min-width: 0;
+        position: absolute;
+        top: 180px;
+        left: 0;
+        right: 0;
+        bottom: 180px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -217,5 +225,12 @@
         position: absolute;
         top: 0;
         left: 0;
+    }
+
+    .casters-area {
+        position: absolute;
+        bottom: 16px;
+        left: 24px;
+        z-index: 10;
     }
 </style>
