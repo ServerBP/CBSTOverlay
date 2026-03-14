@@ -81,6 +81,7 @@
         socket.on('tournamentOverlayUpdate:match', (data: any) => handleOverlayResponse(decode(data), true));
         socket.on('matchOverlayUpdate:scoreSubmit', (data: any) => handleOverlayResponse(decode(data), false));
         socket.on('tournamentOverlayUpdate:matchDetails', (data: any) => handleOverlayResponse(decode(data), false));
+        socket.on('matchOverlayUpdate:playerVolumes', (data: any) => handleOverlayResponse(decode(data), false));
         socket.on('matchOverlayUpdate:TAData', (data: any) => {
             handleOverlayResponse(decode(data), false);
             initialiseTAConnection();
