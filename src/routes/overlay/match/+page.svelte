@@ -302,10 +302,10 @@
                 <div class="stream-box">
                     <WebRTCPlayer
                         videoUrl={`https://webrtc.egress.stream.beatkhana.com/live/${overlay.match.sides.team1.captain.guid}/whep`}
-                        isMuted={false}
+                        isMuted={overlay.match.sides.team1.members[0].isMutedOnOverlay}
                         hideButtons={true}
                         autoPlay={true}
-                        volume={100}
+                        volume={overlay.match.sides.team1.members[0].volumeOnOverlay}
                         fillMode={'cover'}
                     />
                     <MissCounter
@@ -320,10 +320,10 @@
                 <div class="stream-box">
                     <WebRTCPlayer
                         videoUrl={`https://webrtc.egress.stream.beatkhana.com/live/${overlay.match.sides.team2.captain.guid}/whep`}
-                        isMuted={false}
+                        isMuted={overlay.match.sides.team2.members[0].isMutedOnOverlay}
                         hideButtons={true}
                         autoPlay={true}
-                        volume={100}
+                        volume={overlay.match.sides.team2.members[0].volumeOnOverlay}
                         fillMode={'cover'}
                     />
                     <ComboDisplay combo={rpCombo} side="right" />
