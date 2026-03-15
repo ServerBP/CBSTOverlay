@@ -3,7 +3,6 @@
     import Background from "$lib/overlay/Background.svelte";
     import Header from "$lib/overlay/Header.svelte";
     import PicksBansSongCard from "$lib/overlay/PicksBansSongCard.svelte";
-    import PicksBansOverview from "$lib/overlay/PicksBansOverview.svelte";
     import Container from "$lib/Container.svelte";
 	import { onMount } from "svelte";
     import { io, Socket } from 'socket.io-client';

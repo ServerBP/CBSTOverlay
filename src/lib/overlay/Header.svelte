@@ -71,21 +71,7 @@
     });
 </script>
 
-<div class="header">
-    <!-- Clip path for the polygon bottom edge -->
-    <svg class="sr-only" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-            <clipPath id="headerClip" clipPathUnits="objectBoundingBox">
-                <!-- A polygon that keeps the top straight and gives the bottom a subtle angular shape -->
-                <polygon points="
-                    0,0  1,0
-                    1,0.88  0.72,0.88  0.68,1  0.58,0.88
-                    0.42,0.88  0.32,1  0.28,0.88  0,0.88
-                " />
-            </clipPath>
-        </defs>
-    </svg>
-
+<div class="header geist">
     <div class="header-inner">
         <!-- LEFT SIDE (Team 1) -->
         <div class="side side-left">
@@ -126,8 +112,9 @@
 
         <div class="center">
             <img src="/Logo.svg" alt="CBST Logo" class="logo" />
-            <div class="match-type-wrapper">
-                <div class="match-type-bg"></div>
+            <div class="match-type-box">
+                <div class="mt-corner mt-tl"></div>
+                <div class="mt-corner mt-br"></div>
                 <span class="match-type-text">{matchType}</span>
             </div>
         </div>
@@ -195,7 +182,18 @@
         align-items: stretch;
         width: 100%;
         height: 100%;
-        background: linear-gradient(180deg, #1a1014 0%, #2a1018 60%, #1a1014 100%);
+        background: linear-gradient(180deg, #0e0608 0%, #1a0a10 50%, #0e0608 100%);
+    }
+
+    /* Subtle warm side accents */
+    .header-inner::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+            linear-gradient(90deg, rgba(196, 30, 58, 0.06) 0%, transparent 25%),
+            linear-gradient(270deg, rgba(196, 30, 58, 0.06) 0%, transparent 25%);
     }
 
     /* Bottom accent line */
@@ -205,10 +203,9 @@
         bottom: 0;
         left: 0;
         right: 0;
-        height: 3px;
+        height: 2px;
         pointer-events: none;
-        background: linear-gradient(90deg, #c41e3a, #e8552e 50%, #c41e3a);
-        opacity: 0.9;
+        background: linear-gradient(90deg, rgba(196, 30, 58, 0.15), #c41e3a 30%, #c41e3a 70%, rgba(196, 30, 58, 0.15));
     }
 
     .side {
@@ -232,32 +229,32 @@
         flex-shrink: 0;
         width: 160px;
         height: 160px;
-        padding: 8px;
+        padding: 12px;
     }
 
     .avatar {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        border-radius: 14px;
-        
-        box-shadow: 0 0 18px rgba(196, 30, 58, 0.45);
+        border-radius: 4px;
     }
 
     .avatar.left {
-        border: 3px solid #d2cdce;
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.06);
     }
 
     .avatar.right {
-        border: 3px solid #c41e3a;
+        border: 2px solid #c41e3a;
+        box-shadow: 0 0 20px rgba(196, 30, 58, 0.15);
     }
 
     .avatar-placeholder {
         width: 100%;
         height: 100%;
-        border-radius: 14px;
-        border: 3px solid #c41e3a;
-        background: linear-gradient(135deg, #2a1018, #3d1520);
+        border-radius: 4px;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        background: rgba(196, 30, 58, 0.04);
     }
 
     .player-info {
@@ -266,8 +263,8 @@
         justify-content: center;
         min-width: 0;
         flex: 1;
-        padding: 0 18px;
-        gap: 6px;
+        padding: 0 24px;
+        gap: 8px;
     }
 
     .player-info-left {
@@ -279,15 +276,15 @@
     }
 
     .player-name {
-        font-family: 'Keania', sans-serif;
-        font-size: 32px;
+        font-size: 30px;
+        font-weight: 700;
         color: #fff;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         max-width: 520px;
-        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
-        letter-spacing: 1px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
     }
 
     .score-row {
@@ -312,7 +309,7 @@
     }
 
     .maple-empty {
-        filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5)) brightness(0.4) opacity(0.6);
+        filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5)) brightness(0.3) opacity(0.5);
     }
 
     .maple-filled {
@@ -334,9 +331,9 @@
         display: flex;
         align-items: center;
         gap: 3px;
-        background: rgba(196, 30, 58, 0.25);
-        border: 1px solid rgba(196, 30, 58, 0.6);
-        border-radius: 8px;
+        background: rgba(196, 30, 58, 0.15);
+        border: 1px solid rgba(196, 30, 58, 0.4);
+        border-radius: 2px;
         padding: 3px 8px;
         margin: 0 4px;
         transition: transform 0.15s ease;
@@ -344,12 +341,12 @@
 
     .replay-badge .pi {
         font-size: 16px;
-        color: #e8552e;
+        color: #c41e3a;
     }
 
     .replay-count {
-        font-family: 'Keania', sans-serif;
-        font-size: 16px;
+        font-size: 15px;
+        font-weight: 700;
         color: #fff;
     }
 
@@ -376,40 +373,51 @@
     }
 
     .logo {
-        width: 140px;
-        height: 140px;
+        width: 120px;
+        height: 120px;
         object-fit: contain;
-        filter: drop-shadow(0 2px 10px rgba(196, 30, 58, 0.5));
+        filter: drop-shadow(0 2px 8px rgba(196, 30, 58, 0.35));
     }
 
-    .match-type-wrapper {
+    .match-type-box {
         position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-top: -6px;
-        padding: 2px 0;
-        min-width: 200px;
+        margin-top: 2px;
+        padding: 5px 28px;
+        min-width: 180px;
+        border: 1px solid rgba(196, 30, 58, 0.4);
+        background: rgba(196, 30, 58, 0.08);
     }
 
-    .match-type-bg {
+    .mt-corner {
         position: absolute;
-        inset: 0;
-        background: linear-gradient(90deg, transparent, #c41e3a 20%, #e8552e 50%, #c41e3a 80%, transparent);
-        clip-path: polygon(8% 0%, 92% 0%, 100% 50%, 92% 100%, 8% 100%, 0% 50%);
-        opacity: 0.9;
+        width: 8px;
+        height: 8px;
+        pointer-events: none;
+    }
+
+    .mt-tl {
+        top: -1px;
+        left: -1px;
+        border-top: 2px solid #c41e3a;
+        border-left: 2px solid #c41e3a;
+    }
+
+    .mt-br {
+        bottom: -1px;
+        right: -1px;
+        border-bottom: 2px solid #c41e3a;
+        border-right: 2px solid #c41e3a;
     }
 
     .match-type-text {
-        position: relative;
-        font-family: 'Keania', sans-serif;
-        font-size: 15px;
-        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.9);
         text-transform: uppercase;
-        letter-spacing: 2px;
-        padding: 4px 28px;
+        letter-spacing: 3px;
         white-space: nowrap;
-        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
-        z-index: 1;
     }
 </style>

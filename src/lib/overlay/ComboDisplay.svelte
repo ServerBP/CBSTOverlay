@@ -1,36 +1,39 @@
 <script lang="ts">
+    import { createTween } from '$lib/tween.svelte';
+    import { onDestroy } from 'svelte';
+
     let { combo = 0, side = 'left' } = $props<{
         combo: number;
         side: 'left' | 'right';
     }>();
 
+    const tweenCombo = createTween(0, 150);
+
     let prevCombo = $state(0);
     let animClass = $state('');
-    let displayCombo = $state(0);
+
+    $effect(() => {
+        tweenCombo.set(combo);
+    });
 
     $effect(() => {
         const newCombo = combo;
         if (newCombo !== prevCombo) {
             if (newCombo > prevCombo && newCombo > 0) {
-                // Combo went up
                 animClass = 'bump';
             } else if (newCombo < prevCombo) {
-                // Combo broke (miss / bad cut)
                 animClass = 'shake';
             }
-            displayCombo = newCombo;
             prevCombo = newCombo;
-
-            // Remove animation class after it plays
-            setTimeout(() => {
-                animClass = '';
-            }, 350);
+            setTimeout(() => { animClass = ''; }, 350);
         }
     });
+
+    onDestroy(() => { tweenCombo.destroy(); });
 </script>
 
-<div class="combo-display {side} {animClass}" class:hidden={displayCombo === 0}>
-    <span class="combo-x">x</span><span class="combo-number">{displayCombo}</span>
+<div class="combo-display {side} {animClass}" class:hidden={combo === 0}>
+    <span class="combo-x">x</span><span class="combo-number">{Math.round(tweenCombo.value)}</span>
 </div>
 
 <style>
@@ -43,9 +46,8 @@
         font-weight: 800;
         color: white;
         font-family: "Orbitron", sans-serif;
-        text-shadow:
-            0 0 8px rgba(255, 255, 255, 0.5),
-            0 2px 6px rgba(0, 0, 0, 0.7);
+        background: rgba(0, 0, 0, 0.6);
+        padding: 4px 12px;
         z-index: 20;
         pointer-events: none;
         transition: opacity 0.2s ease;
@@ -64,13 +66,13 @@
     }
 
     .combo-x {
-        font-size: 22px;
+        font-size: 20px;
         opacity: 0.7;
         font-weight: 700;
     }
 
     .combo-number {
-        font-size: 38px;
+        font-size: 36px;
         font-variant-numeric: tabular-nums;
         letter-spacing: -1px;
     }
@@ -84,17 +86,10 @@
             transform: scale(1);
         }
         40% {
-            transform: scale(1.2);
-            text-shadow:
-                0 0 14px rgba(255, 255, 255, 0.8),
-                0 0 24px rgba(120, 200, 255, 0.5),
-                0 2px 6px rgba(0, 0, 0, 0.7);
+            transform: scale(1.15);
         }
         100% {
             transform: scale(1);
-            text-shadow:
-                0 0 8px rgba(255, 255, 255, 0.5),
-                0 2px 6px rgba(0, 0, 0, 0.7);
         }
     }
 

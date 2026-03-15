@@ -16,12 +16,12 @@
 
 <div
 	class="container"
-	style={`--container-width: ${width}; --container-height: ${height}; --line-color: ${lineColor}; --plus-color: ${plusColor};`}
+	style={`--container-width: ${width}; --container-height: ${height}; --line-color: ${lineColor}; --corner-color: ${plusColor};`}
 >
-	<div class="corner top-left"><span class="h"></span><span class="v"></span></div>
-	<div class="corner top-right"><span class="h"></span><span class="v"></span></div>
-	<div class="corner bottom-left"><span class="h"></span><span class="v"></span></div>
-	<div class="corner bottom-right"><span class="h"></span><span class="v"></span></div>
+	<div class="corner corner-tl"></div>
+	<div class="corner corner-tr"></div>
+	<div class="corner corner-bl"></div>
+	<div class="corner corner-br"></div>
 
 	<div class="inner">
 		{#if children}
@@ -35,7 +35,7 @@
 		position: relative;
 		width: var(--container-width);
 		height: var(--container-height);
-		border: 2px solid var(--line-color);
+		border: 1px solid var(--line-color);
 	}
 
 	.inner {
@@ -50,51 +50,36 @@
 
 	.corner {
 		position: absolute;
-		width: 1.5rem;
-		height: 1.5rem;
+		width: 1rem;
+		height: 1rem;
 		pointer-events: none;
 	}
 
-	.corner .h,
-	.corner .v {
-		position: absolute;
-		background: var(--plus-color);
-		border-radius: 99px;
+	.corner-tl {
+		top: -1px;
+		left: -1px;
+		border-top: 2px solid var(--corner-color);
+		border-left: 2px solid var(--corner-color);
 	}
 
-	.corner .h {
-		top: 50%;
-		left: 0;
-		width: 100%;
-		height: 4px;
-		transform: translateY(-50%);
+	.corner-tr {
+		top: -1px;
+		right: -1px;
+		border-top: 2px solid var(--corner-color);
+		border-right: 2px solid var(--corner-color);
 	}
 
-	.corner .v {
-		top: 0;
-		left: 50%;
-		width: 4px;
-		height: 100%;
-		transform: translateX(-50%);
+	.corner-bl {
+		bottom: -1px;
+		left: -1px;
+		border-bottom: 2px solid var(--corner-color);
+		border-left: 2px solid var(--corner-color);
 	}
 
-	.top-left {
-		top: -0.75rem;
-		left: -0.75rem;
-	}
-
-	.top-right {
-		top: -0.75rem;
-		right: -0.75rem;
-	}
-
-	.bottom-left {
-		bottom: -0.75rem;
-		left: -0.75rem;
-	}
-
-	.bottom-right {
-		bottom: -0.75rem;
-		right: -0.75rem;
+	.corner-br {
+		bottom: -1px;
+		right: -1px;
+		border-bottom: 2px solid var(--corner-color);
+		border-right: 2px solid var(--corner-color);
 	}
 </style>

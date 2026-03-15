@@ -81,8 +81,8 @@
 	}
 
 	.song-card {
-		background: linear-gradient(135deg, #2e2e2e 0%, #3a3a3a 50%, #2e2e2e 100%);
-		border-radius: 0.625rem;
+		background: #141414;
+		border-radius: 0;
 		width: 29.5rem;
 		height: 8.5625rem;
 		position: relative;
@@ -90,6 +90,7 @@
 		display: flex;
 		align-items: stretch;
 		border: 1px solid rgba(255, 255, 255, 0.06);
+		font-family: 'Geist', sans-serif;
 		transition:
 			box-shadow 0.4s ease,
 			opacity 0.4s ease,
@@ -101,7 +102,6 @@
 		content: '';
 		position: absolute;
 		inset: 0;
-		border-radius: 0.625rem;
 		z-index: 5;
 		pointer-events: none;
 		opacity: 0;
@@ -138,7 +138,7 @@
 	}
 
 	.difficulty-notation {
-		width: 0.25rem;
+		width: 3px;
 		height: 100%;
 		position: absolute;
 		left: 0;
@@ -153,10 +153,10 @@
 		height: calc(100% + 0.5rem);
 		filter: blur(0.5rem);
 		background: inherit;
-		opacity: 0.7;
+		opacity: 0.5;
 	}
 	.difficulty-notation.expertplus { background: #8b00ff; }
-	.difficulty-notation.expert     { background: #DC143C; }
+	.difficulty-notation.expert     { background: #c41e3a; }
 	.difficulty-notation.hard       { background: #FF6347; }
 	.difficulty-notation.normal     { background: #59B0F4; }
 	.difficulty-notation.easy       { background: #3CB371; }
@@ -174,7 +174,6 @@
 		height: 100%;
 		object-fit: cover;
 		display: block;
-		border-radius: 0.625rem 0 0 0.625rem;
 	}
 
 	/* Soft fade from cover into info area */
@@ -185,7 +184,7 @@
 		right: 0;
 		width: 2.5rem;
 		height: 100%;
-		background: linear-gradient(to left, #2e2e2e, transparent);
+		background: linear-gradient(to left, #141414, transparent);
 		pointer-events: none;
 	}
 
@@ -196,11 +195,11 @@
 		align-items: center;
 		justify-content: center;
 		color: #ffffff;
-		font-family: "Keania";
-		font-size: 2.8rem;
+		font-family: 'Bitcount Prop Double', system-ui;
+		font-size: 3.2rem;
 		font-weight: 400;
 		text-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.7);
-		background: rgba(0, 0, 0, 0.35);
+		background: rgba(0, 0, 0, 0.4);
 		pointer-events: none;
 	}
 
@@ -211,24 +210,25 @@
 		flex-direction: column;
 		justify-content: center;
 		padding: 0.5rem 0.5rem 0.5rem 0.4rem;
-		gap: 0.1rem;
+		gap: 0.15rem;
 		z-index: 1;
 	}
 
 	.song-title {
 		color: #ffffff;
-		font-family: "Keania";
-		font-size: 1.35rem;
+		font-size: 1.2rem;
+		font-weight: 700;
 		line-height: 1.3;
 		white-space: nowrap;
 		text-overflow: ellipsis;
 		overflow: hidden;
+		letter-spacing: 0.01em;
 	}
 
 	.song-author {
-		color: rgba(255, 255, 255, 0.75);
-		font-family: "Keania";
-		font-size: 1.05rem;
+		color: rgba(255, 255, 255, 0.65);
+		font-size: 0.95rem;
+		font-weight: 500;
 		line-height: 1.3;
 		white-space: nowrap;
 		text-overflow: ellipsis;
@@ -236,9 +236,9 @@
 	}
 
 	.level-author {
-		color: rgba(255, 255, 255, 0.55);
-		font-family: "Keania";
-		font-size: 0.95rem;
+		color: rgba(255, 255, 255, 0.4);
+		font-size: 0.82rem;
+		font-weight: 400;
 		line-height: 1.3;
 		white-space: nowrap;
 		text-overflow: ellipsis;
@@ -255,83 +255,77 @@
 		align-items: center;
 		justify-content: center;
 		padding: 0.4rem 0.6rem;
-		gap: 0.35rem;
+		gap: 0.4rem;
 		z-index: 2;
 	}
 
 	.key-badge {
 		display: inline-flex;
 		align-items: center;
-		gap: 0.35rem;
-		padding: 0.2rem 0.6rem;
-		background: rgba(255, 255, 255, 0.08);
-		border-radius: 0.35rem;
+		gap: 0.3rem;
+		padding: 0.2rem 0.55rem;
+		background: rgba(255, 255, 255, 0.06);
+		border: 1px solid rgba(255, 255, 255, 0.08);
 		width: fit-content;
-		color: #3CB371;
-		font-size: 1rem;
+		color: rgba(255, 255, 255, 0.5);
+		font-size: 0.9rem;
 	}
 
 	.key-badge i {
-		font-size: 0.85rem;
-		opacity: 0.8;
+		font-size: 0.75rem;
+		opacity: 0.7;
 	}
 
 	.key-badge span {
-		color: rgba(255, 255, 255, 0.8);
-		font-size: 1rem;
+		color: rgba(255, 255, 255, 0.7);
+		font-size: 0.9rem;
+		font-weight: 600;
 	}
 
 	.actioner-pfp {
-		width: 2.8rem;
-		height: 2.8rem;
-		border-radius: 50%;
-		border: 0.15rem solid rgba(76, 182, 71, 0.6);
+		width: 2.6rem;
+		height: 2.6rem;
+		border-radius: 2px;
+		border: 2px solid rgba(255, 255, 255, 0.15);
 		object-fit: cover;
 		transition:
 			border-color 0.4s ease,
 			box-shadow 0.4s ease;
-		box-shadow: 0 0.125rem 0.4rem rgba(0, 0, 0, 0.4);
 	}
 
 	.actioner-pfp.pick {
-		border-color: rgba(60, 179, 113, 0.8);
-		box-shadow: 0 0 0.4rem rgba(60, 179, 113, 0.3);
+		border-color: rgba(60, 179, 113, 0.7);
 	}
 
 	.actioner-pfp.ban {
-		border-color: rgba(255, 60, 60, 0.8);
-		box-shadow: 0 0 0.4rem rgba(255, 60, 60, 0.3);
+		border-color: rgba(255, 60, 60, 0.7);
 	}
 
 	.state-icon {
 		position: absolute;
-		top: 0.45rem;
-		right: 0.5rem;
-		width: 1.6rem;
-		height: 1.6rem;
-		border-radius: 50%;
+		top: 0.4rem;
+		right: 0.4rem;
+		width: 1.5rem;
+		height: 1.5rem;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		z-index: 3;
-		font-size: 0.75rem;
+		font-size: 0.7rem;
 		color: #fff;
 		animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 	}
 
 	.state-icon.pick-icon {
-		background: rgba(60, 179, 113, 0.85);
-		box-shadow: 0 0 0.5rem rgba(60, 179, 113, 0.4);
+		background: rgba(60, 179, 113, 0.9);
 	}
 
 	.state-icon.ban-icon {
-		background: rgba(220, 50, 50, 0.85);
-		box-shadow: 0 0 0.5rem rgba(220, 50, 50, 0.4);
+		background: rgba(220, 50, 50, 0.9);
 	}
 
 	.state-icon.tb-icon {
-		background: rgba(255, 160, 30, 0.85);
-		box-shadow: 0 0 0.5rem rgba(255, 160, 30, 0.4);
+		background: rgba(255, 160, 30, 0.9);
 	}
 
 	@keyframes popIn {

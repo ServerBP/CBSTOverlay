@@ -1,4 +1,7 @@
 <script lang="ts">
+    import { createTween } from '$lib/tween.svelte';
+    import { onDestroy } from 'svelte';
+
     let {
         notesMissed = 0,
         badCuts = 0,
@@ -16,6 +19,10 @@
     const totalMisses = $derived(notesMissed + badCuts);
     const isFC = $derived(totalMisses === 0 && wallHits === 0 && bombHits === 0);
 
+    const tweenMisses = createTween(0, 150);
+
+    $effect(() => { tweenMisses.set(totalMisses); });
+
     let prevTotal = $state(0);
     let animClass = $state('');
 
@@ -26,18 +33,20 @@
         }
         prevTotal = totalMisses;
     });
+
+    onDestroy(() => { tweenMisses.destroy(); });
 </script>
 
 <div class="miss-counter {side}">
     {#if isFC}
-        <div class="fc-text">
+        <div class="fc-badge">
             <i class="pi pi-check"></i>
             <span class="fc-label">FC</span>
         </div>
     {:else}
-        <div class="miss-text {animClass}">
+        <div class="miss-badge {animClass}">
             <i class="pi pi-times"></i>
-            <span class="miss-number">{totalMisses}</span>
+            <span class="miss-number">{Math.round(tweenMisses.value)}</span>
         </div>
     {/if}
 </div>
@@ -58,49 +67,49 @@
         right: 20px;
     }
 
-    .fc-text {
+    .fc-badge {
         display: flex;
         align-items: center;
         gap: 4px;
+        background: rgba(0, 0, 0, 0.6);
+        padding: 4px 12px;
     }
 
-    .fc-text i {
+    .fc-badge i {
         color: #4ade80;
-        font-size: 20px;
-        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+        font-size: 18px;
     }
 
     .fc-label {
-        font-family: "Exo 2", sans-serif;
+        font-family: "Orbitron", sans-serif;
         font-weight: 800;
-        font-size: 24px;
+        font-size: 22px;
         color: #4ade80;
         letter-spacing: 2px;
-        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
     }
 
-    .miss-text {
+    .miss-badge {
         display: flex;
         align-items: center;
-        gap: 3px;
+        gap: 4px;
+        background: rgba(0, 0, 0, 0.6);
+        padding: 4px 12px;
     }
 
-    .miss-text i {
+    .miss-badge i {
         color: #f87171;
-        font-size: 20px;
-        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+        font-size: 18px;
     }
 
     .miss-number {
-        font-family: "Exo 2", sans-serif;
+        font-family: "Orbitron", sans-serif;
         font-weight: 800;
-        font-size: 24px;
+        font-size: 22px;
         color: #f87171;
         font-variant-numeric: tabular-nums;
-        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
     }
 
-    .miss-text.pulse {
+    .miss-badge.pulse {
         animation: miss-pulse 0.3s ease-out forwards;
     }
 

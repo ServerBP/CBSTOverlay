@@ -14,9 +14,9 @@
 
     /** Dynamic card height: fits 3–9+ maps in ~860px (1080 − 180 header − 40 padding) */
     const cardHeight = $derived(
-        Math.min(100, Math.max(74, Math.floor((860 - (playedMaps.length - 1) * 8) / Math.max(1, playedMaps.length))))
+        Math.min(110, Math.max(78, Math.floor((860 - (playedMaps.length - 1) * 6) / Math.max(1, playedMaps.length))))
     );
-    const coverSize = $derived(Math.min(56, cardHeight - 24));
+    const coverSize = $derived(Math.min(72, cardHeight - 16));
 
     function formatAcc(acc: number): string {
         return acc.toFixed(2) + '%';
@@ -58,7 +58,7 @@
     }
 </script>
 
-<div class="match-summary">
+<div class="match-summary geist">
     {#if playedMaps.length === 0}
         <div class="no-data">
             <i class="pi pi-clock"></i>
@@ -83,6 +83,7 @@
                         class:t2-win={isT2Winner}
                         style="animation-delay: {d}ms; height: {cardHeight}px"
                     >
+                        <!-- Left: Team 1 scores -->
                         <div class="team-side left" class:winner={isT1Winner} class:loser={isT2Winner}>
                             {#if lastRound}
                                 <div class="score-group align-right">
@@ -97,12 +98,13 @@
                                 <span class="accuracy dim" style="animation-delay: {d + 400}ms">--.--</span>
                             {/if}
                             {#if isT1Winner}
-                                <span class="win-arrow t1-arrow" style="animation-delay: {d + 700}ms">
+                                <span class="win-indicator t1-win-ind" style="animation-delay: {d + 700}ms">
                                     <i class="pi pi-crown"></i>
                                 </span>
                             {/if}
                         </div>
 
+                        <!-- Center: Map info -->
                         <div class="map-center" style="animation-delay: {d + 200}ms">
                             <div class="map-content" style="--cover-size: {coverSize}px">
                                 {#if entry.mapImage}
@@ -135,10 +137,11 @@
                             </div>
                         </div>
 
+                        <!-- Right: Team 2 scores -->
                         <div class="team-side right" class:winner={isT2Winner} class:loser={isT1Winner}>
                             {#if isT2Winner}
-                                <span class="win-arrow t2-arrow" style="animation-delay: {d + 700}ms">
-                                    <i class="pi pi-caret-left"></i>
+                                <span class="win-indicator t2-win-ind" style="animation-delay: {d + 700}ms">
+                                    <i class="pi pi-crown"></i>
                                 </span>
                             {/if}
                             {#if lastRound}
@@ -155,6 +158,7 @@
                             {/if}
                         </div>
 
+                        <!-- Winner accent bar -->
                         {#if isT1Winner || isT2Winner}
                             <div
                                 class="winner-bar"
@@ -171,17 +175,13 @@
 </div>
 
 <style>
-    /* ═══════════════════════════════════════════════════════
-       Match Summary Overlay
-       ═══════════════════════════════════════════════════════ */
-
     .match-summary {
         width: 100%;
         height: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 20px 60px;
+        padding: 16px 40px;
     }
 
     .no-data {
@@ -189,9 +189,11 @@
         flex-direction: column;
         align-items: center;
         gap: 12px;
-        font-family: 'Keania', sans-serif;
-        font-size: 24px;
-        color: rgba(255, 255, 255, 0.25);
+        font-size: 22px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.2);
+        letter-spacing: 1px;
+        text-transform: uppercase;
     }
 
     .no-data :global(.pi) {
@@ -202,38 +204,39 @@
     .maps-list {
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 6px;
         width: 100%;
-        max-width: 1700px;
+        max-width: 1780px;
     }
 
     .map-card {
         display: grid;
-        grid-template-columns: 1fr 320px 1fr;
+        grid-template-columns: 1fr 420px 1fr;
         align-items: center;
         position: relative;
-        background: rgba(10, 10, 18, 0.75);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 8px;
+        background: rgba(10, 6, 8, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.04);
         overflow: hidden;
         opacity: 0;
         animation: cardSlideIn 0.5s ease-out both;
     }
 
     .map-card.t1-win {
-        border-left: 3px solid rgba(255, 255, 255, 0.7);
+        border-left: 3px solid rgba(255, 255, 255, 0.5);
     }
 
     .map-card.t2-win {
-        border-right: 3px solid rgba(196, 30, 58, 0.7);
+        border-right: 3px solid rgba(196, 30, 58, 0.6);
     }
+
+    /* ── Team sides ── */
 
     .team-side {
         display: flex;
         align-items: center;
-        gap: 14px;
+        gap: 16px;
         height: 100%;
-        padding: 0 28px;
+        padding: 0 32px;
     }
 
     .team-side.left {
@@ -245,22 +248,24 @@
     }
 
     .team-side.left.winner {
-        background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.035) 100%);
+        background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.03) 100%);
     }
 
     .team-side.right.winner {
-        background: linear-gradient(270deg, transparent 0%, rgba(196, 30, 58, 0.055) 100%);
+        background: linear-gradient(270deg, transparent 0%, rgba(196, 30, 58, 0.045) 100%);
     }
 
     .team-side.loser .accuracy,
     .team-side.loser .score-num {
-        opacity: 0.3 !important;
+        opacity: 0.25 !important;
     }
+
+    /* ── Scores ── */
 
     .score-group {
         display: flex;
         flex-direction: column;
-        gap: 2px;
+        gap: 3px;
     }
 
     .score-group.align-right {
@@ -272,9 +277,11 @@
     }
 
     .accuracy {
-        font-family: 'Keania', sans-serif;
-        font-size: 40px;
+        font-family: 'Geist', sans-serif;
+        font-size: 38px;
+        font-weight: 800;
         line-height: 1;
+        letter-spacing: -0.02em;
         opacity: 0;
         animation: scoreReveal 0.4s ease-out both;
     }
@@ -288,38 +295,45 @@
     }
 
     .accuracy.dim {
-        color: rgba(255, 255, 255, 0.12);
-        font-size: 32px;
+        color: rgba(255, 255, 255, 0.1);
+        font-size: 30px;
+        font-weight: 600;
         animation: fadeIn 0.3s ease-out both;
     }
 
     .score-num {
-        font-family: 'Keania', sans-serif;
+        font-family: 'Geist', sans-serif;
         font-size: 13px;
-        color: rgba(255, 255, 255, 0.25);
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.22);
         line-height: 1;
+        letter-spacing: 0.03em;
         opacity: 0;
         animation: scoreReveal 0.3s ease-out both;
     }
 
-    .win-arrow {
+    /* ── Winner indicator ── */
+
+    .win-indicator {
         opacity: 0;
         display: flex;
         align-items: center;
         animation: winnerArrow 0.5s ease-out both;
     }
 
-    .win-arrow :global(.pi) {
-        font-size: 18px;
+    .win-indicator :global(.pi) {
+        font-size: 16px;
     }
 
-    .win-arrow.t1-arrow {
-        color: rgba(255, 255, 255, 0.55);
+    .win-indicator.t1-win-ind {
+        color: rgba(255, 255, 255, 0.45);
     }
 
-    .win-arrow.t2-arrow {
-        color: rgba(196, 30, 58, 0.65);
+    .win-indicator.t2-win-ind {
+        color: rgba(196, 30, 58, 0.6);
     }
+
+    /* ── Map center ── */
 
     .map-center {
         display: flex;
@@ -333,41 +347,43 @@
     .map-content {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 14px;
     }
 
     .cover-img {
-        width: var(--cover-size, 50px);
-        height: var(--cover-size, 50px);
-        border-radius: 8px;
+        width: var(--cover-size, 56px);
+        height: var(--cover-size, 56px);
         object-fit: cover;
         flex-shrink: 0;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.06);
     }
 
     .cover-img.placeholder {
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px dashed rgba(255, 255, 255, 0.1);
-        box-shadow: none;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
     }
 
     .map-details {
         display: flex;
         flex-direction: column;
-        gap: 5px;
+        gap: 6px;
         min-width: 0;
     }
 
     .map-name {
-        font-family: 'Keania', sans-serif;
-        font-size: 16px;
-        color: rgba(255, 255, 255, 0.5);
+        font-family: 'Geist', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.65);
         line-height: 1.2;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 230px;
+        max-width: 280px;
+        letter-spacing: 0.01em;
     }
+
+    /* ── Badges ── */
 
     .badges {
         display: flex;
@@ -376,11 +392,12 @@
     }
 
     .badge {
-        font-family: 'Keania', sans-serif;
+        font-family: 'Geist', sans-serif;
         font-size: 10px;
-        letter-spacing: 0.4px;
-        padding: 2px 7px;
-        border-radius: 3px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 2px 8px;
         display: flex;
         align-items: center;
         gap: 3px;
@@ -392,30 +409,32 @@
     }
 
     .badge.pick.t1-pick {
-        color: rgba(255, 255, 255, 0.8);
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.75);
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.15);
     }
 
     .badge.pick.t2-pick {
         color: rgba(196, 30, 58, 0.85);
-        background: rgba(196, 30, 58, 0.08);
-        border: 1px solid rgba(196, 30, 58, 0.25);
+        background: rgba(196, 30, 58, 0.06);
+        border: 1px solid rgba(196, 30, 58, 0.2);
     }
 
     .badge.tb {
         color: #ff8800;
-        background: rgba(255, 136, 0, 0.1);
-        border: 1px solid rgba(255, 136, 0, 0.25);
+        background: rgba(255, 136, 0, 0.08);
+        border: 1px solid rgba(255, 136, 0, 0.2);
     }
 
     .badge.replay {
-        color: #e8552e;
-        background: rgba(232, 85, 46, 0.1);
-        border: 1px solid rgba(232, 85, 46, 0.2);
+        color: #c41e3a;
+        background: rgba(196, 30, 58, 0.08);
+        border: 1px solid rgba(196, 30, 58, 0.18);
         opacity: 0;
         animation: replayPop 0.5s ease-out both;
     }
+
+    /* ── Winner bar ── */
 
     .winner-bar {
         position: absolute;
@@ -428,21 +447,19 @@
     }
 
     .winner-bar.t1-bar {
-        background: linear-gradient(90deg, rgba(255, 255, 255, 0.5) 0%, transparent 50%);
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.4) 0%, transparent 50%);
     }
 
     .winner-bar.t2-bar {
-        background: linear-gradient(270deg, rgba(196, 30, 58, 0.6) 0%, transparent 50%);
+        background: linear-gradient(270deg, rgba(196, 30, 58, 0.5) 0%, transparent 50%);
     }
 
-    /* ═══════════════════════════════════════════════════════
-       Animations
-       ═══════════════════════════════════════════════════════ */
+    /* ── Animations ── */
 
     @keyframes cardSlideIn {
         from {
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(24px);
         }
         to {
             opacity: 1;
@@ -453,7 +470,7 @@
     @keyframes scoreReveal {
         from {
             opacity: 0;
-            transform: translateY(8px);
+            transform: translateY(6px);
         }
         to {
             opacity: 1;

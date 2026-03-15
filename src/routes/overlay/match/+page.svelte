@@ -29,6 +29,7 @@
     let currentSong: any = $state(undefined);
 
     let isReplay: boolean = $state(false);
+    let replaySide: 'left' | 'right' | null = $state(null);
     let toBeatAccuracy: number = $state(0);
     let toBeatScore: number = $state(0);
 
@@ -36,6 +37,7 @@
         if (overlay?.match) {
             const result = processMatch(overlay.match);
             isReplay = result.latestMapReplay.isReplay;
+            replaySide = result.latestMapReplay.replaySide;
             toBeatAccuracy = result.latestMapReplay.toBeatAccuracy;
             toBeatScore = result.latestMapReplay.toBeatScore;
         }
@@ -309,6 +311,12 @@
                         volume={overlay.match.sides.team1.members[0].volumeOnOverlay}
                         fillMode={'cover'}
                     />
+                    {#if isReplay && replaySide === 'left'}
+                        <div class="replay-tag tag-left">
+                            <i class="pi pi-replay"></i>
+                            <span>REPLAY</span>
+                        </div>
+                    {/if}
                     <MissCounter
                         notesMissed={lpNotesMissed}
                         badCuts={lpBadCuts}
@@ -327,6 +335,12 @@
                         volume={overlay.match.sides.team2.members[0].volumeOnOverlay}
                         fillMode={'cover'}
                     />
+                    {#if isReplay && replaySide === 'right'}
+                        <div class="replay-tag tag-right">
+                            <i class="pi pi-replay"></i>
+                            <span>REPLAY</span>
+                        </div>
+                    {/if}
                     <ComboDisplay combo={rpCombo} side="right" />
                     <MissCounter
                         notesMissed={rpNotesMissed}
@@ -366,6 +380,7 @@
                     leftScore={lpScore}
                     rightScore={rpScore}
                     isReplay={isReplay}
+                    replaySide={replaySide}
                     toBeatAccuracy={toBeatAccuracy}
                     toBeatScore={toBeatScore}
                 />
@@ -397,7 +412,7 @@
         top: 180px;
         left: 0;
         right: 0;
-        height: 720px;           /* 960 × 3 / 4 */
+        height: 720px;
         display: flex;
     }
 
@@ -409,9 +424,44 @@
         overflow: hidden;
     }
 
+    /* Replay indicator on video */
+    .replay-tag {
+        position: absolute;
+        top: 14px;
+        z-index: 25;
+        background: rgba(0, 0, 0, 0.85);
+        border: 1px solid #c41e3a;
+        padding: 8px 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-family: 'Geist', sans-serif;
+    }
+
+    .replay-tag :global(.pi) {
+        color: #c41e3a;
+        font-size: 14px;
+    }
+
+    .replay-tag span {
+        font-size: 14px;
+        font-weight: 700;
+        color: #c41e3a;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+    }
+
+    .replay-tag.tag-left {
+        left: 14px;
+    }
+
+    .replay-tag.tag-right {
+        right: 14px;
+    }
+
     .tow-area {
         position: absolute;
-        top: 878px;              /* 180 + 720 − 22  →  overlaps boundary */
+        top: 878px;
         left: 1px;
         right: 1px;
         z-index: 10;
@@ -419,10 +469,10 @@
 
     .bottom-section {
         position: absolute;
-        top: 900px;              /* header 180 + streams 720 */
+        top: 900px;
         left: 0;
         right: 0;
-        bottom: 0;               /* 180 px remaining */
+        bottom: 0;
         display: flex;
         align-items: center;
         justify-content: space-between;

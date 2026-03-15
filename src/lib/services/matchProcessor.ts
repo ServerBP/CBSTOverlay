@@ -61,6 +61,7 @@ export type LatestMapReplayInfo = {
     isReplay: boolean;
     toBeatAccuracy: number;
     toBeatScore: number;
+    replaySide: 'left' | 'right' | null;
 };
 
 export interface MatchProcessorResult {
@@ -376,68 +377,63 @@ function buildSequencedMaps(
 
 function detectLatestMapReplayStatus(
     match: any,
-    mapScoresMap: Map<string, MapScore>,
+    _mapScoresMap: Map<string, MapScore>,
 ): LatestMapReplayInfo {
-    const noReplay: LatestMapReplayInfo = { isReplay: false, toBeatAccuracy: 0, toBeatScore: 0 };
+    const noReplay: LatestMapReplayInfo = { isReplay: false, toBeatAccuracy: 0, toBeatScore: 0, replaySide: null };
 
     if (!match?.results?.scores || match.results.scores.length === 0) return noReplay;
 
-    // Find the latest submitted score timestamp and its map key
-    let latestTimestamp = 0;
-    let latestMapKey = '';
-    match.results.scores.forEach((s: any) => {
-        const t = new Date(s.createdAt).getTime();
-        if (t > latestTimestamp) {
-            latestTimestamp = t;
-            latestMapKey = s.mapGuid || s.mapHashIfNotMap || 'unknown';
+    const allTeam1Guids = getTeam1Guids(match);
+
+    // Convert all scores to epoch and find the latest
+    const scoresWithEpoch = match.results.scores.map((s: any) => ({
+        ...s,
+        epoch: new Date(s.createdAt).getTime(),
+        mapKey: s.mapGuid || s.mapHashIfNotMap || 'unknown',
+    }));
+
+    const latestEpoch = Math.max(...scoresWithEpoch.map((s: any) => s.epoch));
+    const latestScore = scoresWithEpoch.find((s: any) => s.epoch === latestEpoch);
+    if (!latestScore) return noReplay;
+
+    // Find all scores on the same map within ±10s of the latest
+    const WINDOW_MS = 10_000;
+    const nearbyScores = scoresWithEpoch.filter((s: any) =>
+        s.mapKey === latestScore.mapKey && Math.abs(s.epoch - latestEpoch) <= WINDOW_MS
+    );
+
+    // Check if any have isCallingReplay
+    const replayScore = nearbyScores.find((s: any) => s.isCallingReplay);
+    if (!replayScore) return noReplay;
+
+    // Determine which side the caller is on
+    const callerIsTeam1 = allTeam1Guids.includes(replayScore.user?.guid);
+    const replaySide: 'left' | 'right' = callerIsTeam1 ? 'left' : 'right';
+
+    // Calculate score to beat from nearby scores
+    let team1Total = 0, team2Total = 0;
+    let team1AccSum = 0, team1Count = 0;
+    let team2AccSum = 0, team2Count = 0;
+
+    nearbyScores.forEach((s: any) => {
+        if (allTeam1Guids.includes(s.user?.guid)) {
+            team1Total += Math.floor(s.score || 0);
+            team1AccSum += s.accuracy || 0;
+            team1Count++;
+        } else {
+            team2Total += Math.floor(s.score || 0);
+            team2AccSum += s.accuracy || 0;
+            team2Count++;
         }
     });
 
-    if (!latestMapKey) return noReplay;
+    const winnerIsTeam1 = team1Total >= team2Total;
+    const toBeatScore = winnerIsTeam1 ? team1Total : team2Total;
+    const toBeatAccuracy = winnerIsTeam1
+        ? (team1Count > 0 ? team1AccSum / team1Count : 0)
+        : (team2Count > 0 ? team2AccSum / team2Count : 0);
 
-    const mapScore = mapScoresMap.get(latestMapKey);
-    if (!mapScore) return noReplay;
-
-    const lastRound = mapScore.rounds[mapScore.rounds.length - 1];
-    if (!lastRound) return noReplay;
-
-    // Check if any player in the latest round called a replay.
-    // Both scores for a map arrive nearly simultaneously (~2 s apart),
-    // so we inspect ALL players in the last round, not just the single
-    // most-recent score.
-    const lastRoundHasReplayCall = [...lastRound.players1, ...lastRound.players2]
-        .some(p => p.isCallingReplay);
-
-    if (lastRoundHasReplayCall) {
-        // A replay was called in this round — compute the score to beat.
-        // It is the higher team total (or the previous STB if that was higher,
-        // which matters for stacked replays).
-        const winningTotal = Math.max(lastRound.total1, lastRound.total2);
-        const winnerIsTeam1 = lastRound.total1 >= lastRound.total2;
-        const winningAccuracy = winnerIsTeam1
-            ? avgAccuracy(lastRound.players1)
-            : avgAccuracy(lastRound.players2);
-
-        const prevStb = lastRound.scoreToBeat || 0;
-        const toBeatScore = Math.max(prevStb, winningTotal);
-        const toBeatAccuracy = toBeatScore === winningTotal
-            ? winningAccuracy
-            : (lastRound.scoreToBeatAccuracy ?? 0);
-
-        return { isReplay: true, toBeatAccuracy, toBeatScore };
-    }
-
-    // If there is more than one round and no new replay call, we are
-    // still inside a replay round (scores may still be incoming).
-    if (mapScore.rounds.length > 1) {
-        return {
-            isReplay: true,
-            toBeatAccuracy: lastRound.scoreToBeatAccuracy ?? 0,
-            toBeatScore: lastRound.scoreToBeat ?? 0,
-        };
-    }
-
-    return noReplay;
+    return { isReplay: true, toBeatAccuracy, toBeatScore, replaySide };
 }
 
 /**
@@ -451,7 +447,7 @@ export function processMatch(match: any): MatchProcessorResult {
             sequencedMaps: [],
             unknownMaps: [],
             allPlayers: [],
-            latestMapReplay: { isReplay: false, toBeatAccuracy: 0, toBeatScore: 0 },
+            latestMapReplay: { isReplay: false, toBeatAccuracy: 0, toBeatScore: 0, replaySide: null },
         };
     }
 

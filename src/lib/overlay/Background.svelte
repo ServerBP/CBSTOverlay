@@ -3,7 +3,8 @@
 </script>
 
 <div class="container">
-    <img class="background" src="/Base.svg" alt="Base" />
+    <video src="/Background_Dark.webm" class="background" muted autoplay loop></video>
+    <!-- <img class="background" src="/Base.svg" alt="Base" /> -->
 
 	<div class="content">
         {#if children}
@@ -52,6 +53,8 @@
         height: 100%;
         object-fit: cover;
         z-index: 0;
+        transform: scale(1.05);
+        filter: blur(5px);
     }
 
     .content {

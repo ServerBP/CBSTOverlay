@@ -1,10 +1,14 @@
 <script lang="ts">
+	import { createTween } from '$lib/tween.svelte';
+	import { onDestroy } from 'svelte';
+
 	let {
 		leftAccuracy = 0,
 		rightAccuracy = 0,
 		leftScore = 0,
 		rightScore = 0,
 		isReplay = false,
+		replaySide = null as 'left' | 'right' | null,
 		toBeatAccuracy = 0,
 		toBeatScore = 0,
 	} = $props<{
@@ -13,16 +17,34 @@
 		leftScore: number;
 		rightScore: number;
 		isReplay?: boolean;
+		replaySide?: 'left' | 'right' | null;
 		toBeatAccuracy?: number;
 		toBeatScore?: number;
 	}>();
+
+	const tLeftAcc = createTween(0, 150);
+	const tRightAcc = createTween(0, 150);
+	const tLeftScore = createTween(0, 150);
+	const tRightScore = createTween(0, 150);
+
+	$effect(() => { tLeftAcc.set(leftAccuracy); });
+	$effect(() => { tRightAcc.set(rightAccuracy); });
+	$effect(() => { tLeftScore.set(leftScore); });
+	$effect(() => { tRightScore.set(rightScore); });
+
+	onDestroy(() => {
+		tLeftAcc.destroy();
+		tRightAcc.destroy();
+		tLeftScore.destroy();
+		tRightScore.destroy();
+	});
 
 	function formatAccuracy(acc: number): string {
 		return (acc * 100).toFixed(2) + "%";
 	}
 
 	function formatScore(score: number): string {
-		return score.toLocaleString();
+		return Math.round(score).toLocaleString();
 	}
 
 	function getDiff(
@@ -34,61 +56,65 @@
 		return { text: sign + d.toFixed(2), isPositive: d >= 0 };
 	}
 
-	const leftDiff = $derived(getDiff(leftAccuracy, toBeatAccuracy));
-	const rightDiff = $derived(getDiff(rightAccuracy, toBeatAccuracy));
+	const leftDiff = $derived(getDiff(tLeftAcc.value, toBeatAccuracy));
+	const rightDiff = $derived(getDiff(tRightAcc.value, toBeatAccuracy));
 </script>
 
-<div class="score-display">
-	<!-- Accuracy row -->
-	<div class="accuracy-row">
-		<div class="acc-side left">
-			{#if isReplay}
-				<span
-					class="diff"
-					class:positive={leftDiff.isPositive}
-					class:negative={!leftDiff.isPositive}>
-					{leftDiff.text}
-				</span>
-			{/if}
-			<span class="accuracy left-color"
-				>{formatAccuracy(leftAccuracy)}</span>
+<div class="score-display geist">
+	<div class="score-panel">
+		<!-- Accuracy row -->
+		<div class="accuracy-row">
+			<div class="acc-side left">
+				{#if isReplay}
+					<span
+						class="diff"
+						class:positive={leftDiff.isPositive}
+						class:negative={!leftDiff.isPositive}>
+						{leftDiff.text}
+					</span>
+				{/if}
+				<span class="accuracy left-color"
+					>{formatAccuracy(tLeftAcc.value)}</span>
+			</div>
+
+			<div class="acc-divider"></div>
+
+			<div class="acc-side right">
+				<span class="accuracy right-color"
+					>{formatAccuracy(tRightAcc.value)}</span>
+				{#if isReplay}
+					<span
+						class="diff"
+						class:positive={rightDiff.isPositive}
+						class:negative={!rightDiff.isPositive}>
+						{rightDiff.text}
+					</span>
+				{/if}
+			</div>
 		</div>
 
-		<div class="acc-divider"></div>
-
-		<div class="acc-side right">
-			<span class="accuracy right-color"
-				>{formatAccuracy(rightAccuracy)}</span>
-			{#if isReplay}
-				<span
-					class="diff"
-					class:positive={rightDiff.isPositive}
-					class:negative={!rightDiff.isPositive}>
-					{rightDiff.text}
-				</span>
-			{/if}
+		<!-- Score row -->
+		<div class="total-score-row">
+			<div class="score-side left">
+				<span class="total-score">{formatScore(tLeftScore.value)}</span>
+			</div>
+			<div class="score-divider"></div>
+			<div class="score-side right">
+				<span class="total-score">{formatScore(tRightScore.value)}</span>
+			</div>
 		</div>
 	</div>
 
-	<!-- Score row -->
-	<div class="total-score-row">
-		<div class="score-side left">
-			<span class="total-score">{formatScore(leftScore)}</span>
-		</div>
-		<div class="score-divider"></div>
-		<div class="score-side right">
-			<span class="total-score">{formatScore(rightScore)}</span>
-		</div>
-	</div>
-
-	<!-- Replay "Score to Beat" indicator -->
+	<!-- Score to beat -->
 	{#if isReplay}
-		<div class="replay-indicator">
-			<span class="replay-label">SCORE TO BEAT</span>
-			<div class="replay-values">
-				<span class="replay-acc">{toBeatAccuracy.toFixed(2)}</span>
-				<span class="replay-sep">|</span>
-				<span class="replay-score">{formatScore(toBeatScore)}</span>
+		<div class="score-to-beat">
+			<div class="stb-corner stb-tl"></div>
+			<div class="stb-corner stb-br"></div>
+			<span class="stb-label">SCORE TO BEAT</span>
+			<div class="stb-values">
+				<span class="stb-acc">{(toBeatAccuracy).toFixed(2)}%</span>
+				<span class="stb-sep">│</span>
+				<span class="stb-score">{formatScore(toBeatScore)}</span>
 			</div>
 		</div>
 	{/if}
@@ -99,8 +125,17 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 2px;
+		gap: 6px;
 		width: 100%;
+	}
+
+	.score-panel {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 2px;
+		/* background: rgba(0, 0, 0, 0.55); */
+		padding: 14px 36px 10px;
 	}
 
 	/* Accuracy row */
@@ -109,44 +144,38 @@
 		align-items: center;
 		justify-content: center;
 		width: 100%;
-		gap: 14px;
+		gap: 16px;
 	}
 
 	.acc-side {
 		display: flex;
 		align-items: baseline;
 		gap: 10px;
+		width: 380px;
+		flex-shrink: 0;
 	}
 
 	.acc-side.left {
 		justify-content: flex-end;
-		flex: 1;
 	}
 	.acc-side.right {
 		justify-content: flex-start;
-		flex: 1;
 	}
 
 	.acc-divider {
 		width: 2px;
-		height: 38px;
-		background: linear-gradient(
-			180deg,
-			transparent,
-			rgba(255, 255, 255, 0.25),
-			transparent
-		);
+		height: 40px;
+		background: rgba(255, 255, 255, 0.15);
 		flex-shrink: 0;
 	}
 
 	.accuracy {
-		/* font-family: "Keania", sans-serif; */
 		font-family: "Orbitron", sans-serif;
-		font-size: 46px;
-		font-weight: 400;
+		font-size: 48px;
+		font-weight: 700;
 		letter-spacing: 1px;
-		text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7);
 		line-height: 1;
+		font-variant-numeric: tabular-nums;
 	}
 
 	.left-color {
@@ -154,27 +183,25 @@
 	}
 
 	.right-color {
-		color: #f01035;
-		text-shadow: 0 2px 14px rgba(196, 30, 58, 0.55);
+		color: #c41e3a;
 	}
 
 	/* Diff badges */
 	.diff {
 		font-family: "Orbitron", sans-serif;
 		font-size: 22px;
-		font-weight: 400;
+		font-weight: 600;
 		letter-spacing: 0.5px;
 		line-height: 1;
+		font-variant-numeric: tabular-nums;
 	}
 
 	.diff.positive {
 		color: #3cb371;
-		text-shadow: 0 0 8px rgba(60, 179, 113, 0.45);
 	}
 
 	.diff.negative {
 		color: #e8112d;
-		text-shadow: 0 0 8px rgba(232, 17, 45, 0.45);
 	}
 
 	/* Score row */
@@ -183,84 +210,99 @@
 		align-items: center;
 		justify-content: center;
 		width: 100%;
-		gap: 14px;
+		gap: 16px;
 	}
 
 	.score-side {
 		display: flex;
 		align-items: center;
+		width: 380px;
+		flex-shrink: 0;
 	}
 
 	.score-side.left {
 		justify-content: flex-end;
-		flex: 1;
 	}
 	.score-side.right {
 		justify-content: flex-start;
-		flex: 1;
 	}
 
 	.score-divider {
 		width: 2px;
-		height: 26px;
-		background: linear-gradient(
-			180deg,
-			transparent,
-			rgba(255, 255, 255, 0.12),
-			transparent
-		);
+		height: 24px;
+		background: rgba(255, 255, 255, 0.08);
 		flex-shrink: 0;
 	}
 
 	.total-score {
 		font-family: "Orbitron", sans-serif;
-		font-size: 30px;
+		font-size: 28px;
 		font-weight: 400;
-		color: #8a8a8e;
+		color: rgba(255, 255, 255, 0.5);
 		letter-spacing: 1px;
-		text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
 		line-height: 1;
+		font-variant-numeric: tabular-nums;
 	}
 
-	/* Replay indicator */
-	.replay-indicator {
+	/* Score to beat — boxy with corner accents */
+	.score-to-beat {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		margin-top: 6px;
-		padding: 5px 22px;
-		background: rgba(0, 0, 0, 0.4);
-		border: 1px solid rgba(196, 30, 58, 0.45);
-		border-radius: 6px;
+		gap: 6px;
+		padding: 12px 36px;
+		background: #000;
+		border: 1px solid rgba(196, 30, 58, 0.4);
 	}
 
-	.replay-label {
-		font-family: "Orbitron", sans-serif;
-		font-size: 11px;
-		color: rgba(255, 255, 255, 0.55);
-		letter-spacing: 3px;
+	.stb-corner {
+		position: absolute;
+		width: 10px;
+		height: 10px;
+		pointer-events: none;
+	}
+
+	.stb-tl {
+		top: -1px;
+		left: -1px;
+		border-top: 2px solid #c41e3a;
+		border-left: 2px solid #c41e3a;
+	}
+
+	.stb-br {
+		bottom: -1px;
+		right: -1px;
+		border-bottom: 2px solid #c41e3a;
+		border-right: 2px solid #c41e3a;
+	}
+
+	.stb-label {
+		font-size: 12px;
+		font-weight: 700;
+		color: rgba(255, 255, 255, 0.6);
+		letter-spacing: 4px;
 		text-transform: uppercase;
 		line-height: 1;
-		margin-bottom: 3px;
 	}
 
-	.replay-values {
+	.stb-values {
 		display: flex;
 		align-items: center;
-		gap: 10px;
+		gap: 14px;
 	}
 
-	.replay-acc,
-	.replay-score {
+	.stb-acc,
+	.stb-score {
 		font-family: "Orbitron", sans-serif;
-		font-size: 20px;
-		color: #e8552e;
-		text-shadow: 0 0 8px rgba(232, 85, 46, 0.4);
+		font-size: 24px;
+		font-weight: 600;
+		color: #c41e3a;
 		line-height: 1;
 	}
 
-	.replay-sep {
-		color: rgba(255, 255, 255, 0.25);
-		font-size: 18px;
+	.stb-sep {
+		color: rgba(255, 255, 255, 0.2);
+		font-size: 20px;
 	}
 </style>
