@@ -2,55 +2,59 @@
     import CountdownMatchContainer from '$lib/overlay/CountdownMatchContainer.svelte';
     import { resolveMatchParticipants } from '$lib/overlay/matchDisplay';
 
-    let { match = null, allMatches = [] } = $props<{ match?: any; allMatches?: any[] }>();
+    let { matches = [], allMatches = [] } = $props<{ matches?: any[]; allMatches?: any[] }>();
 
-    const participants = $derived(match ? resolveMatchParticipants(match, allMatches) : []);
-    const winnerGuid = $derived(match?.results?.winnerGuid ?? null);
-    const team1Score = $derived(match?.results?.team1Score ?? null);
-    const team2Score = $derived(match?.results?.team2Score ?? null);
+    const title = $derived(matches.length === 1 ? 'Previous Match' : 'Previous Matches');
 </script>
 
-<CountdownMatchContainer title="Previous Match">
-    {#if match}
-        <div class="players-box">
-            <div class="player-row" class:winner={participants[0]?.guid && participants[0].guid === winnerGuid}>
-                <div class="player-main">
-                    {#if participants[0]?.avatarUrl}
-                        <img src={participants[0].avatarUrl} alt={participants[0].name} class="avatar" />
-                    {:else}
-                        <div class="avatar avatar-fallback">{participants[0]?.name?.slice(0, 1) ?? '?'}</div>
-                    {/if}
+<CountdownMatchContainer {title}>
+    {#if matches.length > 0}
+        {#each matches as match, idx}
+            {@const participants = resolveMatchParticipants(match, allMatches)}
+            {@const winnerGuid = match?.results?.winnerGuid ?? null}
+            {@const team1Score = match?.results?.team1Score ?? null}
+            {@const team2Score = match?.results?.team2Score ?? null}
 
-                    <span class="name">{participants[0]?.name ?? 'TBD'}</span>
+            <div class="players-box" class:space={idx != matches.length - 1}>
+                <div class="player-row" class:winner={participants[0]?.guid && participants[0].guid === winnerGuid}>
+                    <div class="player-main">
+                        {#if participants[0]?.avatarUrl}
+                            <img src={participants[0].avatarUrl} alt={participants[0].name} class="avatar" />
+                        {:else}
+                            <div class="avatar avatar-fallback">{participants[0]?.name?.slice(0, 1) ?? '?'}</div>
+                        {/if}
 
-                    {#if participants[0]?.guid && participants[0].guid === winnerGuid}
-                        <span class="winner-tag">Winner</span>
-                    {/if}
+                        <span class="name">{participants[0]?.name ?? 'TBD'}</span>
+
+                        {#if participants[0]?.guid && participants[0].guid === winnerGuid}
+                            <span class="winner-tag">Winner</span>
+                        {/if}
+                    </div>
+
+                    <span class="score">{team1Score ?? '-'}</span>
                 </div>
 
-                <span class="score">{team1Score ?? '-'}</span>
-            </div>
+                <div class="player-row" class:winner={participants[1]?.guid && participants[1].guid === winnerGuid}>
+                    <div class="player-main">
+                        {#if participants[1]?.avatarUrl}
+                            <img src={participants[1].avatarUrl} alt={participants[1].name} class="avatar" />
+                        {:else}
+                            <div class="avatar avatar-fallback">{participants[1]?.name?.slice(0, 1) ?? '?'}</div>
+                        {/if}
 
-            <div class="player-row" class:winner={participants[1]?.guid && participants[1].guid === winnerGuid}>
-                <div class="player-main">
-                    {#if participants[1]?.avatarUrl}
-                        <img src={participants[1].avatarUrl} alt={participants[1].name} class="avatar" />
-                    {:else}
-                        <div class="avatar avatar-fallback">{participants[1]?.name?.slice(0, 1) ?? '?'}</div>
-                    {/if}
+                        <span class="name">{participants[1]?.name ?? 'TBD'}</span>
 
-                    <span class="name">{participants[1]?.name ?? 'TBD'}</span>
+                        {#if participants[1]?.guid && participants[1].guid === winnerGuid}
+                            <span class="winner-tag">Winner</span>
+                        {/if}
+                    </div>
 
-                    {#if participants[1]?.guid && participants[1].guid === winnerGuid}
-                        <span class="winner-tag">Winner</span>
-                    {/if}
+                    <span class="score">{team2Score ?? '-'}</span>
                 </div>
-
-                <span class="score">{team2Score ?? '-'}</span>
             </div>
-        </div>
+        {/each}
     {:else}
-        <p class="empty">No previous match found.</p>
+        <p class="empty">No previous matches found.</p>
     {/if}
 </CountdownMatchContainer>
 
@@ -58,6 +62,10 @@
     .players-box {
         overflow: hidden;
         border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .players-box.space {
+        margin-bottom: 1rem;
     }
 
     .player-row {

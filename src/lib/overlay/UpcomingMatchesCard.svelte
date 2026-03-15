@@ -7,9 +7,11 @@
         allMatches?: any[];
         nowMs?: number;
     }>();
+
+    const title = $derived(matches.length === 1 ? 'Upcoming Match' : 'Upcoming Matches');
 </script>
 
-<CountdownMatchContainer title="Upcoming Matches">
+<CountdownMatchContainer {title}>
     {#if matches.length > 0}
         <div class="upcoming-list">
             {#each matches as match}

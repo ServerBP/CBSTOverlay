@@ -36,7 +36,7 @@
     let hasHours = $derived(displayH > 0);
 
     const selectedMatches = $derived(pickPreviousAndUpcoming(matches, nowMs));
-    const previousMatch = $derived(selectedMatches.previous);
+    const previousMatches = $derived(selectedMatches.previous ?? []);
     const upcomingMatches = $derived(selectedMatches.upcoming);
 
     onMount(() => {
@@ -112,7 +112,7 @@
             </div>
 
             <div class="match-info-stack">
-                <PreviousMatchCard match={previousMatch} allMatches={matches} />
+                <PreviousMatchCard matches={previousMatches} allMatches={matches} />
                 <UpcomingMatchesCard matches={upcomingMatches} allMatches={matches} nowMs={nowMs} />
             </div>
 

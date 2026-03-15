@@ -99,13 +99,13 @@ export function resolveMatchParticipants(match: any, allMatches: any[]): [Partic
     return [side1, side2];
 }
 
-export function pickPreviousAndUpcoming(matches: any[], nowMs: number): { previous: any | null; upcoming: any[] } {
+export function pickPreviousAndUpcoming(matches: any[], nowMs: number, nPrev: number = 1, nUpc: number = 1): { previous: any[] | null; upcoming: any[] } {
     const sorted = [...matches]
         .filter((match: any) => Number.isFinite(getMatchStartMs(match)))
         .sort((a: any, b: any) => getMatchStartMs(a) - getMatchStartMs(b));
 
-    const previous = [...sorted].reverse().find((match: any) => getMatchStartMs(match) <= nowMs) ?? null;
-    const upcoming = sorted.filter((match: any) => getMatchStartMs(match) > nowMs).slice(0, 1);
+    const previous = [...sorted].reverse().filter((match: any) => getMatchStartMs(match) <= nowMs).slice(0, nPrev) ?? null;
+    const upcoming = sorted.filter((match: any) => getMatchStartMs(match) > nowMs).slice(0, nUpc);
 
     return { previous, upcoming };
 }

@@ -33,6 +33,7 @@
         return [
             { label: 'Base Overlay', url: `${baseUrl}/overlay/base`, needsToken: false },
             { label: 'Casters Overlay', url: `${baseUrl}/overlay/casters`, needsToken: false },
+            { label: 'Bracket', url: `${baseUrl}/overlay/bracket`, needsToken: false },
             { label: 'Countdown', url: `${baseUrl}/overlay/countdown${countdownParams ? '?' + countdownParams : ''}`, needsToken: false },
             { label: 'Match Overlay', url: `${baseUrl}/overlay/match?token=${t}`, needsToken: true },
             { label: 'Picks & Bans', url: `${baseUrl}/overlay/picksbans?token=${t}`, needsToken: true },
