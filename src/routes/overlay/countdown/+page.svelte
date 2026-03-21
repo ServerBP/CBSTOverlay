@@ -85,19 +85,7 @@
                 <img src="/Logo.svg" alt="Logo" />
             </div>
             <div class="brand geist">
-                <div class="brand-line">
-                    {#each 'BEAT'.split('') as char}
-                        <span class="text-blue-600">{char}</span>
-                    {/each}
-                    {#each 'SABER'.split('') as char}
-                        <span class="text-red-600">{char}</span>
-                    {/each}
-                </div>
-                <div class="brand-line">
-                    {#each 'CANADA'.split('') as char}
-                        <span>{char}</span>
-                    {/each}
-                </div>
+                <img src="/TEXT_WHITE.png" alt="Beat Saber Canada">
             </div>
         </div>
     </div>
@@ -116,7 +104,7 @@
                 <UpcomingMatchesCard matches={upcomingMatches} allMatches={matches} nowMs={nowMs} />
             </div>
 
-            <div class="countdown-box dotsfont">
+            <div class="countdown-box agency">
                 <div class="countdown-segment">
                     <span class="countdown-number">{hasHours ? `${pad(displayH)}:` : ''}{pad(displayM)}</span>
                 </div>
@@ -264,7 +252,7 @@
         background: #000;
         display: flex;
         flex-direction: column;
-        width: 28rem;
+        width: 24rem;
         margin-top: auto;
     }
 

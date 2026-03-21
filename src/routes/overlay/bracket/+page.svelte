@@ -48,7 +48,7 @@
         <video src="/Background_White.webm" class="panel-bg" muted autoplay loop></video>
         <div class="vignette"></div>
         <div class="left-content">
-            <div class="title dotsfont">BRACKET</div>
+            <div class="title agency">BRACKET</div>
 
             <div class="match-info-stack">
                 <PreviousMatchCard matches={previousMatches} allMatches={matches} />
