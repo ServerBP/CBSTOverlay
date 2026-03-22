@@ -12,6 +12,9 @@
     let cdM = $state(5);
     let cdS = $state(0);
 
+    // Prize pool state
+    let prizePool = $state(0);
+
     const devdiscordOAuthUrl = "https://discord.com/oauth2/authorize?client_id=1348291960552820757&response_type=token&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fcontrol&scope=identify";
     const discordOAuthUrl = "https://discord.com/oauth2/authorize?client_id=1348291960552820757&response_type=token&redirect_uri=https%3A%2F%2Foverlay.cbst.shyyluna.dev%2Fcontrol&scope=identify";
 
@@ -35,6 +38,7 @@
             { label: 'Casters Overlay', url: `${baseUrl}/overlay/casters`, needsToken: false },
             { label: 'Bracket', url: `${baseUrl}/overlay/bracket`, needsToken: false },
             { label: 'Countdown', url: `${baseUrl}/overlay/countdown${countdownParams ? '?' + countdownParams : ''}`, needsToken: false },
+            { label: 'Winners', url: `${baseUrl}/overlay/winners/v1?total=${prizePool}`, needsToken: false },
             { label: 'Match Overlay', url: `${baseUrl}/overlay/match?token=${t}`, needsToken: true },
             { label: 'Picks & Bans', url: `${baseUrl}/overlay/picksbans?token=${t}`, needsToken: true },
             { label: 'Match Summary', url: `${baseUrl}/overlay/matchSummary?token=${t}`, needsToken: true },
@@ -164,6 +168,18 @@
                 <label>
                     <span>Seconds</span>
                     <input type="number" min="0" max="59" bind:value={cdS} />
+                </label>
+            </div>
+        </section>
+
+        <!-- Prize Pool -->
+        <section class="card">
+            <h2>Priz Pool</h2>
+            <p class="muted">Set how much the total prize pool is, then copy the URL.</p>
+            <div class="countdown-picker">
+                <label>
+                    <span>Total CAD</span>
+                    <input type="number" min="0" bind:value={prizePool} />
                 </label>
             </div>
         </section>
