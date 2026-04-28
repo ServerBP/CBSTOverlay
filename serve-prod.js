@@ -6,6 +6,7 @@ const server = await preview({
         host: true,
         allowedHosts: [
             'overlay.cbst.shyyluna.dev',
+            '3af09.artemis.shyyluna.dev',
             'localhost',
             '127.0.0.1'
         ]
