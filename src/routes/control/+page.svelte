@@ -19,7 +19,7 @@
     let useP2Twitch = $state(false);
 
     // const discordOAuthUrl = "https://discord.com/oauth2/authorize?client_id=1348291960552820757&response_type=token&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fcontrol&scope=identify";
-    const discordOAuthUrl = "https://discord.com/oauth2/authorize?client_id=1348291960552820757&response_type=token&redirect_uri=https%3A%2F%3af09.artemis.shyyluna.dev%2Fcontrol&scope=identify";
+    const discordOAuthUrl = "https://discord.com/oauth2/authorize?client_id=1348291960552820757&response_type=token&redirect_uri=https%3A%2F%2F3af09.artemis.shyyluna.dev%2Fcontrol&scope=identify";
 
     const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
 
