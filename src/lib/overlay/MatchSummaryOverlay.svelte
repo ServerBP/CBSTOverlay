@@ -214,19 +214,19 @@
         grid-template-columns: 1fr 420px 1fr;
         align-items: center;
         position: relative;
-        background: rgba(10, 6, 8, 0.85);
-        border: 1px solid rgba(255, 255, 255, 0.04);
+        background: rgba(5, 5, 5, 0.92);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         overflow: hidden;
         opacity: 0;
         animation: cardSlideIn 0.5s ease-out both;
     }
 
     .map-card.t1-win {
-        border-left: 3px solid rgba(255, 255, 255, 0.5);
+        border-left: 1px solid rgba(255, 255, 255, 0.12);
     }
 
     .map-card.t2-win {
-        border-right: 3px solid rgba(196, 30, 58, 0.6);
+        border-right: 1px solid rgba(75, 121, 255, 0.24);
     }
 
     /* ── Team sides ── */
@@ -252,7 +252,7 @@
     }
 
     .team-side.right.winner {
-        background: linear-gradient(270deg, transparent 0%, rgba(196, 30, 58, 0.045) 100%);
+        background: linear-gradient(270deg, transparent 0%, rgba(75, 121, 255, 0.045) 100%);
     }
 
     .team-side.loser .accuracy,
@@ -291,7 +291,7 @@
     }
 
     .accuracy.t2-acc {
-        color: #c41e3a;
+        color: #4b79ff;
     }
 
     .accuracy.dim {
@@ -330,7 +330,7 @@
     }
 
     .win-indicator.t2-win-ind {
-        color: rgba(196, 30, 58, 0.6);
+        color: rgba(75, 121, 255, 0.72);
     }
 
     /* ── Map center ── */
@@ -415,9 +415,9 @@
     }
 
     .badge.pick.t2-pick {
-        color: rgba(196, 30, 58, 0.85);
-        background: rgba(196, 30, 58, 0.06);
-        border: 1px solid rgba(196, 30, 58, 0.2);
+        color: rgba(75, 121, 255, 0.88);
+        background: rgba(75, 121, 255, 0.08);
+        border: 1px solid rgba(75, 121, 255, 0.2);
     }
 
     .badge.tb {
@@ -427,9 +427,9 @@
     }
 
     .badge.replay {
-        color: #c41e3a;
-        background: rgba(196, 30, 58, 0.08);
-        border: 1px solid rgba(196, 30, 58, 0.18);
+        color: #d63b4b;
+        background: rgba(214, 59, 75, 0.08);
+        border: 1px solid rgba(214, 59, 75, 0.18);
         opacity: 0;
         animation: replayPop 0.5s ease-out both;
     }
@@ -451,7 +451,7 @@
     }
 
     .winner-bar.t2-bar {
-        background: linear-gradient(270deg, rgba(196, 30, 58, 0.5) 0%, transparent 50%);
+        background: linear-gradient(270deg, rgba(75, 121, 255, 0.5) 0%, transparent 50%);
     }
 
     /* ── Animations ── */

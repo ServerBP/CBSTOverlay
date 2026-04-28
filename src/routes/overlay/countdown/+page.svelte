@@ -44,7 +44,7 @@
 
         const loadMatches = async () => {
             try {
-                const bkResponse = await fetch(`${PUBLIC_BK_API_URL}/tournament/CBST2026?matches=true`).then((data) => data.json());
+                const bkResponse = await fetch(`${PUBLIC_BK_API_URL}/tournament/MAPS?matches=true`).then((data) => data.json());
 
                 if (cancelled) {
                     return;
@@ -79,19 +79,19 @@
 
 <div class="screen">
     <div class="left-panel">
-        <video src="/bg_gameplay.webm" class="panel-bg" muted autoplay loop></video>
+        <video src="/MAPSGameplay.webm" class="panel-bg left" muted autoplay loop></video>
         <div class="left-content">
             <div class="logo">
-                <img src="/Logo.svg" alt="Logo" />
+                <!-- <img src="https://api.beatkhana.com/api/cdn/view/c2858d611e8f0bd05a0e9fad574c1c55.png" alt="Logo" /> -->
             </div>
             <div class="brand geist">
-                <img src="/TEXT_WHITE.png" alt="Beat Saber Canada">
+                <img src="/MAPS_transparent_logo.png" alt="Beat Saber Canada">
             </div>
         </div>
     </div>
 
     <div class="right-panel">
-        <video src="/Background_White.webm" class="panel-bg" muted autoplay loop></video>
+        <video src="/Background_Topology_White.webm" class="panel-bg right" muted autoplay loop></video>
         <div class="vignette"></div>
         <div class="right-content">
             <div class="live-in-box geist">
@@ -104,7 +104,7 @@
                 <UpcomingMatchesCard matches={upcomingMatches} allMatches={matches} nowMs={nowMs} />
             </div>
 
-            <div class="countdown-box agency">
+            <div class="countdown-box dotsfont">
                 <div class="countdown-segment">
                     <span class="countdown-number">{hasHours ? `${pad(displayH)}:` : ''}{pad(displayM)}</span>
                 </div>
@@ -166,6 +166,16 @@
         height: 100%;
         object-fit: cover;
         z-index: 0;
+    }
+
+    .panel-bg.left {
+        filter: blur(15px) brightness(0.8);
+        transform: scale(1.02);
+    }
+
+    .panel-bg.right {
+        filter: blur(10px) brightness(1.15);
+        transform: scale(1.02);
     }
 
     .left-content {

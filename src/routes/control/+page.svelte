@@ -15,8 +15,11 @@
     // Prize pool state
     let prizePool = $state(0);
 
-    const devdiscordOAuthUrl = "https://discord.com/oauth2/authorize?client_id=1348291960552820757&response_type=token&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fcontrol&scope=identify";
-    const discordOAuthUrl = "https://discord.com/oauth2/authorize?client_id=1348291960552820757&response_type=token&redirect_uri=https%3A%2F%2Foverlay.cbst.shyyluna.dev%2Fcontrol&scope=identify";
+    let useP1Twitch = $state(false);
+    let useP2Twitch = $state(false);
+
+    // const discordOAuthUrl = "https://discord.com/oauth2/authorize?client_id=1348291960552820757&response_type=token&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fcontrol&scope=identify";
+    const discordOAuthUrl = "https://discord.com/oauth2/authorize?client_id=1348291960552820757&response_type=token&redirect_uri=https%3A%2F%3af09.artemis.shyyluna.dev%2Fcontrol&scope=identify";
 
     const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
 
@@ -33,17 +36,24 @@
             cdS > 0 ? `s=${cdS}` : '',
         ].filter(Boolean).join('&');
 
+        const extraParams: string[] = [];
+        if (useP1Twitch) extraParams.push('p1s=twitch');
+        if (useP2Twitch) extraParams.push('p2s=twitch');
+        const extras = extraParams.length ? '&' + extraParams.join('&') : '';
+
         return [
             { label: 'Base Overlay', url: `${baseUrl}/overlay/base`, needsToken: false },
             { label: 'Casters Overlay', url: `${baseUrl}/overlay/casters`, needsToken: false },
             { label: 'Bracket', url: `${baseUrl}/overlay/bracket`, needsToken: false },
             { label: 'Countdown', url: `${baseUrl}/overlay/countdown${countdownParams ? '?' + countdownParams : ''}`, needsToken: false },
             { label: 'Winners', url: `${baseUrl}/overlay/winners/v1?total=${prizePool}`, needsToken: false },
-            { label: 'Match Overlay', url: `${baseUrl}/overlay/match?token=${t}`, needsToken: true },
-            { label: 'Picks & Bans', url: `${baseUrl}/overlay/picksbans?token=${t}`, needsToken: true },
-            { label: 'Match Summary', url: `${baseUrl}/overlay/matchSummary?token=${t}`, needsToken: true },
+            { label: 'Match Overlay', url: `${baseUrl}/overlay/match?token=${t}${extras}`, needsToken: true },
+            { label: 'Picks & Bans', url: `${baseUrl}/overlay/picksbans?token=${t}${extras}`, needsToken: true },
+            { label: 'Match Summary', url: `${baseUrl}/overlay/matchSummary?token=${t}${extras}`, needsToken: true },
         ];
     });
+
+    
 
     async function copyToClipboard(url: string, key: string) {
         try {
@@ -187,6 +197,17 @@
         <!-- Overlay URLs -->
         <section class="card">
             <h2>Overlay URLs</h2>
+            <div class="muted" style="margin-bottom: 0.75rem;">
+                <label style="display:flex; gap:0.5rem; align-items:center;">
+                    <input type="checkbox" bind:checked={useP1Twitch} />
+                    <span>Use player1 twitch</span>
+                </label>
+                <label style="display:flex; gap:0.5rem; align-items:center; margin-top:0.5rem;">
+                    <input type="checkbox" bind:checked={useP2Twitch} />
+                    <span>Use player2 twitch</span>
+                </label>
+            </div>
+
             <div class="url-list">
                 {#each overlayUrls as item, i}
                     <div class="url-row">

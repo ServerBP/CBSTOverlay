@@ -1,6 +1,6 @@
 <script lang="ts">
     import CountdownMatchContainer from '$lib/overlay/CountdownMatchContainer.svelte';
-    import { formatRelativeTime, formatTorontoTime, getMatchStartMs, resolveMatchParticipants } from '$lib/overlay/matchDisplay';
+    import { formatGMTTime, formatRelativeTime, getMatchStartMs, resolveMatchParticipants } from '$lib/overlay/matchDisplay';
 
     let { matches = [], allMatches = [], nowMs = Date.now() } = $props<{
         matches?: any[];
@@ -19,7 +19,7 @@
                 {@const startMs = getMatchStartMs(match)}
 
                 <div class="upcoming-match">
-                    <div class="match-time-label">{formatTorontoTime(startMs)} · {formatRelativeTime(startMs, nowMs)}</div>
+                    <div class="match-time-label">{formatGMTTime(startMs)} · {formatRelativeTime(startMs, nowMs)}</div>
                     <div class="players-box">
                         <div class="player-row">
                             <div class="player-main">

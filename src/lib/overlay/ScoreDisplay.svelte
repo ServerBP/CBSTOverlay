@@ -179,11 +179,11 @@
 	}
 
 	.left-color {
-		color: #ffffff;
+		color: #d63b4b;
 	}
 
 	.right-color {
-		color: #c41e3a;
+		color: #4b79ff;
 	}
 
 	/* Diff badges */
@@ -251,37 +251,37 @@
 		flex-direction: column;
 		align-items: center;
 		gap: 6px;
-		padding: 12px 36px;
-		background: #000;
-		border: 1px solid rgba(196, 30, 58, 0.4);
+		padding: 10px 32px;
+		background: rgba(12, 12, 12, 0.96);
+		border: 1px solid rgba(255, 255, 255, 0.12);
 	}
 
 	.stb-corner {
 		position: absolute;
-		width: 10px;
-		height: 10px;
+		width: 8px;
+		height: 8px;
 		pointer-events: none;
 	}
 
 	.stb-tl {
 		top: -1px;
 		left: -1px;
-		border-top: 2px solid #c41e3a;
-		border-left: 2px solid #c41e3a;
+		border-top: 1px solid rgba(255, 255, 255, 0.12);
+		border-left: 1px solid rgba(255, 255, 255, 0.12);
 	}
 
 	.stb-br {
 		bottom: -1px;
 		right: -1px;
-		border-bottom: 2px solid #c41e3a;
-		border-right: 2px solid #c41e3a;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+		border-right: 1px solid rgba(255, 255, 255, 0.12);
 	}
 
 	.stb-label {
-		font-size: 12px;
+		font-size: 11px;
 		font-weight: 700;
 		color: rgba(255, 255, 255, 0.6);
-		letter-spacing: 4px;
+		letter-spacing: 3px;
 		text-transform: uppercase;
 		line-height: 1;
 	}
@@ -297,7 +297,7 @@
 		font-family: "Orbitron", sans-serif;
 		font-size: 24px;
 		font-weight: 600;
-		color: #c41e3a;
+		color: rgba(255, 255, 255, 0.88);
 		line-height: 1;
 	}
 

@@ -110,12 +110,12 @@ export function pickPreviousAndUpcoming(matches: any[], nowMs: number, nPrev: nu
     return { previous, upcoming };
 }
 
-export function formatTorontoTime(matchStartMs: number): string {
+export function formatGMTTime(matchStartMs: number): string {
     return `${new Intl.DateTimeFormat('en-CA', {
-        timeZone: 'America/Toronto',
+        timeZone: 'UTC',
         hour: 'numeric',
         minute: '2-digit'
-    }).format(new Date(matchStartMs))} ET`;
+    }).format(new Date(matchStartMs))} GMT`;
 }
 
 export function formatRelativeTime(matchStartMs: number, nowMs: number): string {

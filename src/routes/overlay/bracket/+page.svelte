@@ -18,7 +18,7 @@
 
         const loadMatches = async () => {
             try {
-                const bkResponse = await fetch(`${PUBLIC_BK_API_URL}/tournament/CBST2026?matches=true`).then((data) => data.json());
+                const bkResponse = await fetch(`${PUBLIC_BK_API_URL}/tournament/MAPS?matches=true`).then((data) => data.json());
 
                 if (cancelled) {
                     return;
@@ -45,7 +45,7 @@
 
 <div class="screen">
     <div class="left-panel">
-        <video src="/Background_White.webm" class="panel-bg" muted autoplay loop></video>
+        <video src="/Background_Topology_White.webm" class="panel-bg left" muted autoplay loop></video>
         <div class="vignette"></div>
         <div class="left-content">
             <div class="title agency">BRACKET</div>
@@ -58,7 +58,7 @@
     </div>
 
     <div class="right-panel">
-        <video src="/Background_Dark.webm" class="panel-bg" muted autoplay loop></video>
+        <video src="/Background_Topology.webm" class="panel-bg" muted autoplay loop></video>
         <div class="blur-overlay"></div>
     </div>
 
@@ -117,6 +117,11 @@
         height: 100%;
         object-fit: cover;
         z-index: 0;
+    }
+
+    .panel-bg.left {
+        filter: blur(10px) brightness(1.15);
+        transform: scale(1.02);
     }
 
     .vignette {

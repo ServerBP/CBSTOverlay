@@ -13,12 +13,15 @@
     import Loading from "$lib/Loading.svelte";
     import { PUBLIC_BK_WS_URL, PUBLIC_TOURNAMENT_GUID, PUBLIC_OVERLAY_GUID } from "$env/static/public";
     import WebRTCPlayer from "$lib/overlay/WebRTCPlayer.svelte";
+    import TwitchPlayer from "$lib/overlay/TwitchPlayer.svelte";
     import ComboDisplay from "$lib/overlay/ComboDisplay.svelte";
     import MissCounter from "$lib/overlay/MissCounter.svelte";
     import { TAClient, Response_ResponseType, User_PlayStates, User, Match, RealtimeScore, Tournament, User_ClientTypes } from 'moons-ta-client';
 
     const query = page.url.searchParams;
     const authToken = query.get('token');
+    const p1s = query.get('p1s');
+    const p2s = query.get('p2s');
 
     let socket: Socket | null = $state(null);
     let loadingMessage: string | undefined = $state(undefined);
@@ -238,7 +241,7 @@
 
     async function updateCurrentMapData(match: Match) {
         const currentLevelHash = match.selectedMap?.gameplayParameters?.beatmap?.levelId.toLowerCase().replace('custom_level_', '');
-        currentSong = overlay.match.mapPool.maps.find((map: any) => map.hash === currentLevelHash) || undefined;
+        currentSong = overlay.match.mapPool.maps.find((map: any) => map.hash.toLowerCase() === currentLevelHash) || undefined;
     }
 
     async function handleMatchCreated(params: [match: Match, tournament: Tournament]) {
@@ -303,14 +306,23 @@
 
             <div class="streams-row">
                 <div class="stream-box">
-                    <WebRTCPlayer
-                        videoUrl={`https://webrtc.egress.stream.beatkhana.com/live/${overlay.match.sides.team1.captain.guid}/whep`}
-                        isMuted={overlay.match.sides.team1.members[0].isMutedOnOverlay}
-                        hideButtons={true}
-                        autoPlay={true}
-                        volume={overlay.match.sides.team1.members[0].volumeOnOverlay}
-                        fillMode={'cover'}
-                    />
+                    {#if p1s === 'twitch'}
+                        <TwitchPlayer
+                            channel={overlay.match.sides.team1.captain.twitchName}
+                            isMuted={overlay.match.sides.team1.members[0].isMutedOnOverlay}
+                            volume={overlay.match.sides.team1.members[0].volumeOnOverlay}
+                            fillMode={'cover'}
+                        />
+                    {:else}
+                        <WebRTCPlayer
+                            videoUrl={`https://webrtc.egress.stream.beatkhana.com/live/${overlay.match.sides.team1.captain.guid}/whep`}
+                            isMuted={overlay.match.sides.team1.members[0].isMutedOnOverlay}
+                            hideButtons={true}
+                            autoPlay={true}
+                            volume={overlay.match.sides.team1.members[0].volumeOnOverlay}
+                            fillMode={'cover'}
+                        />
+                    {/if}
                     {#if isReplay && replaySide === 'left'}
                         <div class="replay-tag tag-left">
                             <i class="pi pi-replay"></i>
@@ -327,14 +339,23 @@
                     <ComboDisplay combo={lpCombo} side="left" />
                 </div>
                 <div class="stream-box">
-                    <WebRTCPlayer
-                        videoUrl={`https://webrtc.egress.stream.beatkhana.com/live/${overlay.match.sides.team2.captain.guid}/whep`}
-                        isMuted={overlay.match.sides.team2.members[0].isMutedOnOverlay}
-                        hideButtons={true}
-                        autoPlay={true}
-                        volume={overlay.match.sides.team2.members[0].volumeOnOverlay}
-                        fillMode={'cover'}
-                    />
+                    {#if p2s === 'twitch'}
+                        <TwitchPlayer
+                            channel={overlay.match.sides.team2.captain.twitchName}
+                            isMuted={overlay.match.sides.team2.members[0].isMutedOnOverlay}
+                            volume={overlay.match.sides.team2.members[0].volumeOnOverlay}
+                            fillMode={'cover'}
+                        />
+                    {:else}
+                        <WebRTCPlayer
+                            videoUrl={`https://webrtc.egress.stream.beatkhana.com/live/${overlay.match.sides.team2.captain.guid}/whep`}
+                            isMuted={overlay.match.sides.team2.members[0].isMutedOnOverlay}
+                            hideButtons={true}
+                            autoPlay={true}
+                            volume={overlay.match.sides.team2.members[0].volumeOnOverlay}
+                            fillMode={'cover'}
+                        />
+                    {/if}
                     {#if isReplay && replaySide === 'right'}
                         <div class="replay-tag tag-right">
                             <i class="pi pi-replay"></i>
@@ -427,11 +448,11 @@
     /* Replay indicator on video */
     .replay-tag {
         position: absolute;
-        top: 14px;
+        top: 20px;
         z-index: 25;
-        background: rgba(0, 0, 0, 0.85);
-        border: 1px solid #c41e3a;
-        padding: 8px 16px;
+        background: rgba(12, 12, 12, 0.96);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 8px 14px;
         display: flex;
         align-items: center;
         gap: 8px;
@@ -439,44 +460,46 @@
     }
 
     .replay-tag :global(.pi) {
-        color: #c41e3a;
-        font-size: 14px;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 15px;
     }
 
     .replay-tag span {
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 700;
-        color: #c41e3a;
+        color: rgba(255, 255, 255, 0.88);
         text-transform: uppercase;
-        letter-spacing: 3px;
+        letter-spacing: 2px;
     }
 
     .replay-tag.tag-left {
-        left: 14px;
+        left: 18px;
     }
 
     .replay-tag.tag-right {
-        right: 14px;
+        right: 18px;
     }
 
     .tow-area {
         position: absolute;
-        top: 878px;
-        left: 1px;
-        right: 1px;
+        top: 890px;
+        left: 360px;
+        right: 360px;
         z-index: 10;
+        height: 38px;
     }
 
     .bottom-section {
         position: absolute;
-        top: 900px;
+        top: 920px;
         left: 0;
         right: 0;
         bottom: 0;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0 24px;
+        padding: 0 28px;
+        background: linear-gradient(180deg, rgba(8, 8, 8, 0) 0%, rgba(8, 8, 8, 0.85) 100%);
     }
 
     .casters-area {
@@ -487,10 +510,10 @@
 
     .scores-area {
         position: absolute;
-        top: 900px;
+        top: 920px;
         left: 50%;
         transform: translateX(-50%);
-        height: 180px;
+        height: 160px;
         display: flex;
         align-items: center;
         justify-content: center;

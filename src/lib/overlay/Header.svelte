@@ -26,6 +26,7 @@
     const team2Replays = $derived(match?.results?.team2ReplaysRemaining ?? 0);
 
     const matchType = $derived(match?.matchType ?? '');
+    const tournamentLogoUrl = "/MAPS_transparent_logo.png";
 
     let prevT1Score   = $state(0);
     let prevT2Score   = $state(0);
@@ -73,100 +74,89 @@
 
 <div class="header geist">
     <div class="header-inner">
-        <!-- LEFT SIDE (Team 1) -->
         <div class="side side-left">
-            <div class="avatar-wrapper">
-                {#if team1Avatar}
-                    <img src={team1Avatar} alt={team1Name} class="avatar left" />
-                {:else}
-                    <div class="avatar avatar-placeholder left"></div>
-                {/if}
-            </div>
-
-            <div class="player-info player-info-left">
-                <span class="player-name">{team1Name}</span>
-
-                <div class="score-row score-row-left">
-                    <!-- Maple leaves left→right, filled ones first -->
-                    {#each Array(maxScore) as _, i}
-                        <img
-                            src={i < team1Score ? '/FilledMaple.svg' : '/EmptyMaple.svg'}
-                            alt={i < team1Score ? 'Filled maple' : 'Empty maple'}
-                            class="maple"
-                            class:maple-filled={i < team1Score}
-                            class:maple-empty={i >= team1Score}
-                            class:maple-pop={t1ScoreAnim !== null && i === t1ScoreAnim - 1}
-                        />
-                    {/each}
-
-                    <!-- Replay indicator -->
-                    {#if team1Replays > 0}
-                        <div class="replay-badge" class:replay-pop={t1ReplayAnim}>
-                            <i class="pi pi-replay"></i>
-                            <span class="replay-count">{team1Replays}</span>
-                        </div>
+            <div class="identity identity-left">
+                <div class="avatar-wrapper">
+                    {#if team1Avatar}
+                        <img src={team1Avatar} alt={team1Name} class="avatar avatar-left" />
+                    {:else}
+                        <div class="avatar avatar-placeholder avatar-left"></div>
                     {/if}
                 </div>
+
+                <div class="player-info player-info-left">
+                    <span class="player-name">{team1Name}</span>
+                </div>
+            </div>
+
+            <div class="score-row score-row-left">
+                <div
+                    class="replay-badge"
+                    class:replay-active={team1Replays > 0}
+                    class:replay-used={team1Replays === 0}
+                    class:replay-pop={t1ReplayAnim}
+                >
+                    <i class="pi pi-replay"></i>
+                </div>
+
+                {#each Array(maxScore) as _, i}
+                    <div
+                        class="score-tile score-tile-left"
+                        class:score-tile-filled={i < team1Score}
+                        class:score-tile-empty={i >= team1Score}
+                        class:score-tile-pop={t1ScoreAnim !== null && i === t1ScoreAnim - 1}
+                    ></div>
+                {/each}
             </div>
         </div>
 
         <div class="center">
-            <img src="/Logo.svg" alt="CBST Logo" class="logo" />
+            <img src={tournamentLogoUrl} alt="Tournament logo" class="tournament-logo" />
             <div class="match-type-box">
-                <div class="mt-corner mt-tl"></div>
-                <div class="mt-corner mt-br"></div>
                 <span class="match-type-text">{matchType}</span>
             </div>
         </div>
 
         <div class="side side-right">
-            <div class="player-info player-info-right">
-                <span class="player-name">{team2Name}</span>
+            <div class="score-row score-row-right">
+                {#each Array(maxScore) as _, i}
+                    {@const tileIndex = maxScore - 1 - i}
+                    <div
+                        class="score-tile score-tile-right"
+                        class:score-tile-filled={tileIndex < team2Score}
+                        class:score-tile-empty={tileIndex >= team2Score}
+                        class:score-tile-pop={t2ScoreAnim !== null && tileIndex === t2ScoreAnim - 1}
+                    ></div>
+                {/each}
 
-                <div class="score-row score-row-right">
-                    <!-- Replay indicator -->
-                    {#if team2Replays > 0}
-                        <div class="replay-badge" class:replay-pop={t2ReplayAnim}>
-                            <i class="pi pi-replay"></i>
-                            <span class="replay-count">{team2Replays}</span>
-                        </div>
-                    {/if}
-
-                    <!-- Maple leaves: right→left fill. We reverse them so
-                        the rightmost leaf fills first. -->
-                    {#each Array(maxScore) as _, i}
-                        {@const leafIndex = maxScore - 1 - i}
-                        <img
-                            src={leafIndex < team2Score ? '/FilledMaple.svg' : '/EmptyMaple.svg'}
-                            alt={leafIndex < team2Score ? 'Filled maple' : 'Empty maple'}
-                            class="maple"
-                            class:maple-filled={leafIndex < team2Score}
-                            class:maple-empty={leafIndex >= team2Score}
-                            class:maple-pop={t2ScoreAnim !== null && leafIndex === t2ScoreAnim - 1}
-                        />
-                    {/each}
+                <div
+                    class="replay-badge"
+                    class:replay-active={team2Replays > 0}
+                    class:replay-used={team2Replays === 0}
+                    class:replay-pop={t2ReplayAnim}
+                >
+                    <i class="pi pi-replay"></i>
                 </div>
             </div>
 
-            <div class="avatar-wrapper">
-                {#if team2Avatar}
-                    <img src={team2Avatar} alt={team2Name} class="avatar right" />
-                {:else}
-                    <div class="avatar avatar-placeholder right"></div>
-                {/if}
+            <div class="identity identity-right">
+                <div class="player-info player-info-right">
+                    <span class="player-name">{team2Name}</span>
+                </div>
+
+                <div class="avatar-wrapper">
+                    {#if team2Avatar}
+                        <img src={team2Avatar} alt={team2Name} class="avatar avatar-right" />
+                    {:else}
+                        <div class="avatar avatar-placeholder avatar-right"></div>
+                    {/if}
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <style>
-    .sr-only {
-        position: absolute;
-        width: 0;
-        height: 0;
-        overflow: hidden;
-    }
-
     .header {
         position: relative;
         width: 1920px;
@@ -182,21 +172,21 @@
         align-items: stretch;
         width: 100%;
         height: 100%;
-        background: linear-gradient(180deg, #0e0608 0%, #1a0a10 50%, #0e0608 100%);
+        background:
+            radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 30%),
+            linear-gradient(180deg, #050505 0%, #101010 52%, #050505 100%);
     }
 
-    /* Subtle warm side accents */
     .header-inner::before {
         content: '';
         position: absolute;
         inset: 0;
         pointer-events: none;
         background:
-            linear-gradient(90deg, rgba(196, 30, 58, 0.06) 0%, transparent 25%),
-            linear-gradient(270deg, rgba(196, 30, 58, 0.06) 0%, transparent 25%);
+            linear-gradient(90deg, rgba(214, 59, 75, 0.12) 0%, transparent 24%),
+            linear-gradient(270deg, rgba(72, 118, 255, 0.12) 0%, transparent 24%);
     }
 
-    /* Bottom accent line */
     .header-inner::after {
         content: '';
         position: absolute;
@@ -205,7 +195,7 @@
         right: 0;
         height: 2px;
         pointer-events: none;
-        background: linear-gradient(90deg, rgba(196, 30, 58, 0.15), #c41e3a 30%, #c41e3a 70%, rgba(196, 30, 58, 0.15));
+        background: linear-gradient(90deg, rgba(214, 59, 75, 0.35), rgba(255, 255, 255, 0.14) 50%, rgba(72, 118, 255, 0.35));
     }
 
     .side {
@@ -213,48 +203,67 @@
         align-items: center;
         flex: 1;
         min-width: 0;
-        padding: 8px 0;
+        padding: 10px 0;
+        gap: 18px;
     }
 
     .side-left {
+        --team-accent: #d63b4b;
         padding-left: 0;
     }
 
     .side-right {
+        --team-accent: #4b79ff;
         padding-right: 0;
+        justify-content: flex-end;
+    }
+
+    .identity {
+        display: flex;
+        align-items: center;
+        min-width: 0;
+        gap: 14px;
+    }
+
+    .identity-left {
+        margin-right: auto;
+    }
+
+    .identity-right {
+        margin-left: auto;
         justify-content: flex-end;
     }
 
     .avatar-wrapper {
         flex-shrink: 0;
-        width: 160px;
-        height: 160px;
-        padding: 12px;
+        width: 150px;
+        height: 150px;
+        padding: 8px;
     }
 
     .avatar {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        border-radius: 4px;
+        border-radius: 0;
     }
 
-    .avatar.left {
-        border: 2px solid rgba(255, 255, 255, 0.5);
-        box-shadow: 0 0 20px rgba(255, 255, 255, 0.06);
+    .avatar-left {
+        border: 1px solid rgba(214, 59, 75, 0.75);
+        box-shadow: 0 0 16px rgba(214, 59, 75, 0.1);
     }
 
-    .avatar.right {
-        border: 2px solid #c41e3a;
-        box-shadow: 0 0 20px rgba(196, 30, 58, 0.15);
+    .avatar-right {
+        border: 1px solid rgba(75, 121, 255, 0.78);
+        box-shadow: 0 0 16px rgba(75, 121, 255, 0.1);
     }
 
     .avatar-placeholder {
         width: 100%;
         height: 100%;
-        border-radius: 4px;
-        border: 2px solid rgba(255, 255, 255, 0.1);
-        background: rgba(196, 30, 58, 0.04);
+        border-radius: 0;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.04);
     }
 
     .player-info {
@@ -263,8 +272,8 @@
         justify-content: center;
         min-width: 0;
         flex: 1;
-        padding: 0 24px;
-        gap: 8px;
+        padding: 0;
+        gap: 0;
     }
 
     .player-info-left {
@@ -276,78 +285,116 @@
     }
 
     .player-name {
-        font-size: 30px;
+        font-size: 26px;
         font-weight: 700;
-        color: #fff;
+        color: rgba(245, 245, 245, 0.98);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 520px;
-        letter-spacing: 0.5px;
+        max-width: 320px;
+        letter-spacing: 0.8px;
         text-transform: uppercase;
+        text-align: inherit;
     }
 
     .score-row {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
     }
 
     .score-row-left {
         flex-direction: row;
+        margin-left: auto;
     }
 
     .score-row-right {
         flex-direction: row;
+        margin-right: auto;
     }
 
-    .maple {
-        width: 36px;
-        height: 36px;
-        transition: transform 0.15s ease;
-        filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
+    .score-tile {
+        width: 26px;
+        height: 116px;
+        flex-shrink: 0;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(22, 22, 22, 0.92);
+        transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
     }
 
-    .maple-empty {
-        filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5)) brightness(0.3) opacity(0.5);
+    .score-tile-left {
+        clip-path: polygon(12px 0, 100% 0, calc(100% - 12px) 100%, 0 100%);
     }
 
-    .maple-filled {
-        filter: drop-shadow(0 2px 6px rgba(196, 30, 58, 0.6));
+    .score-tile-right {
+        clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 100%, 12px 100%);
     }
 
-    .maple-pop {
-        animation: popLeaf 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    .score-tile-empty {
+        background: rgba(20, 20, 20, 0.94);
+        border-color: color-mix(in srgb, var(--team-accent) 78%, rgba(255, 255, 255, 0.06));
     }
 
-    @keyframes popLeaf {
-        0%   { transform: scale(1); }
-        30%  { transform: scale(1.55); }
-        60%  { transform: scale(0.9); }
-        100% { transform: scale(1); }
+    .score-tile-filled {
+        background: var(--team-accent);
+        border-color: var(--team-accent);
+    }
+
+    .score-tile-pop {
+        animation: popTile 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes popTile {
+        0% {
+            transform: scale(1);
+        }
+
+        30% {
+            transform: scale(1.28);
+        }
+
+        60% {
+            transform: scale(0.94);
+        }
+
+        100% {
+            transform: scale(1);
+        }
     }
 
     .replay-badge {
         display: flex;
         align-items: center;
-        gap: 3px;
-        background: rgba(196, 30, 58, 0.15);
-        border: 1px solid rgba(196, 30, 58, 0.4);
-        border-radius: 2px;
-        padding: 3px 8px;
-        margin: 0 4px;
-        transition: transform 0.15s ease;
+        justify-content: center;
+        gap: 0;
+        width: 52px;
+        height: 52px;
+        justify-content: center;
+        transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
     }
 
     .replay-badge .pi {
-        font-size: 16px;
-        color: #c41e3a;
+        font-size: 27px;
     }
 
-    .replay-count {
-        font-size: 15px;
-        font-weight: 700;
-        color: #fff;
+    .replay-active {
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .replay-active .pi {
+        color: rgba(255, 255, 255, 0.98);
+        text-shadow: 0 0 8px rgba(255, 255, 255, 0.38);
+    }
+
+    .replay-used {
+        border-color: rgba(255, 255, 255, 0.08);
+        box-shadow: none;
+        opacity: 0.72;
+    }
+
+    .replay-used .pi {
+        color: rgba(190, 190, 190, 0.72);
+        text-shadow: none;
     }
 
     .replay-pop {
@@ -355,10 +402,21 @@
     }
 
     @keyframes popReplay {
-        0%   { transform: scale(1); }
-        30%  { transform: scale(1.35); }
-        60%  { transform: scale(0.92); }
-        100% { transform: scale(1); }
+        0% {
+            transform: scale(1);
+        }
+
+        30% {
+            transform: scale(1.25);
+        }
+
+        60% {
+            transform: scale(0.95);
+        }
+
+        100% {
+            transform: scale(1);
+        }
     }
 
     .center {
@@ -366,17 +424,17 @@
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
-        width: 320px;
+        width: 292px;
         flex-shrink: 0;
-        padding-top: 4px;
+        padding-top: 6px;
         z-index: 2;
     }
 
-    .logo {
-        width: 120px;
-        height: 120px;
+    .tournament-logo {
+        width: 112px;
+        height: 112px;
         object-fit: contain;
-        filter: drop-shadow(0 2px 8px rgba(196, 30, 58, 0.35));
+        filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.08));
     }
 
     .match-type-box {
@@ -384,38 +442,18 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-top: 2px;
-        padding: 5px 28px;
-        min-width: 180px;
-        border: 1px solid rgba(196, 30, 58, 0.4);
-        background: rgba(196, 30, 58, 0.08);
-    }
-
-    .mt-corner {
-        position: absolute;
-        width: 8px;
-        height: 8px;
-        pointer-events: none;
-    }
-
-    .mt-tl {
-        top: -1px;
-        left: -1px;
-        border-top: 2px solid #c41e3a;
-        border-left: 2px solid #c41e3a;
-    }
-
-    .mt-br {
-        bottom: -1px;
-        right: -1px;
-        border-bottom: 2px solid #c41e3a;
-        border-right: 2px solid #c41e3a;
+        margin-top: 8px;
+        padding: 6px 22px;
+        min-width: 168px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.03);
+        clip-path: polygon(12px 0, 100% 0, calc(100% - 12px) 100%, 0 100%);
     }
 
     .match-type-text {
-        font-size: 13px;
+        font-size: 11px;
         font-weight: 700;
-        color: rgba(255, 255, 255, 0.9);
+        color: rgba(235, 235, 235, 0.9);
         text-transform: uppercase;
         letter-spacing: 3px;
         white-space: nowrap;

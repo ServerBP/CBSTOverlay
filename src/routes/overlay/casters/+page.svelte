@@ -8,7 +8,7 @@
 <Background>
     <div class="page-center">
         <h1 class="dotsfont uppercase text-9xl mb-4 casters-text">CASTERS</h1>
-        <Container width="60rem" height="20rem" lineColor="#ae4040" plusColor="#f0f0f0">
+        <Container width="60rem" height="20rem" lineColor="#404040" plusColor="#f0f0f0">
             <div class="middle-space"></div>
         </Container>
     </div>
